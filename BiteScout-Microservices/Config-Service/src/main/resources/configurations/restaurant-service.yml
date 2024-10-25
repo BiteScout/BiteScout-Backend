@@ -1,0 +1,39 @@
+server:
+  port: 8060
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/restaurants
+    username: user
+    password: password
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  kafka:
+    producer:
+      bootstrap-servers: localhost:9092
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.type.mapping: reservationRequest:com.bitescout.app.restaurantservice.kafka.ReservationRequest,specialOffer:com.bitescout.app.restaurantservice.kafka.SpecialOffer
+        #### information for reservationRequest ###
+        # reservation requests will be represented by a record named ReservationRequest
+        # (and put that in a package named kafka).
+        # This exact line will also be in the notification-service.yml, and the records in Notification-Service,
+        # to be able to listen to messages of type ReservationRequest. (except "restaurantservice" being replaced)
+        # This line allows spring boot to serialize/deserialize a message that matches ReservationRequest's structure.
+        # reservationRequest just serves as a key.
+        # after NotificationService gets the message it can send and email or a text message.
+        # btw, frontend can't directly listen to kafka, so NotificationService will also take care of
+        # notifying the frontend.
+
+        #### everything above applies for specialOffer ####
+
+application:
+  config:
+    reviews-url: http://localhost:8222/api/v1/reviews
+    reservations-url: http://localhost:8222/api/v1/reservations
+    promotions-url: http://localhost:8222/api/v1/promotions
+

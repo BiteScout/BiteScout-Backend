@@ -1,0 +1,36 @@
+server:
+  port: 8090
+spring:
+  data:
+    mongodb:
+      username: user
+      password: password
+      host: localhost
+      port: 27017
+      database: notifications
+      authentication-database: admin
+  kafka:
+    consumer:
+      bootstrap-servers: localhost:9092
+      group-id: reservationGroup, offerGroup
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: '*'
+        spring.json.type.mapping: reservationRequest:com.bitescout.app.restaurantservice.kafka.ReservationRequest,specialOffer:com.bitescout.app.restaurantservice.kafka.SpecialOffer
+  mail:
+    host: localhost
+    port: 1025
+    username: user
+    password: password
+    properties:
+      mail:
+        smtp:
+          trust: "*"
+        auth: true
+        starttls:
+          enabled: true
+        connectiontimeout: 5000
+        timeout: 3000
+        writetimeout: 5000

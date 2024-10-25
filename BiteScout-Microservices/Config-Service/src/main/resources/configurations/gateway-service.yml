@@ -1,0 +1,37 @@
+server:
+  port: 8222
+spring:
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: authentication-service
+          uri: lb:http://AUTHENTICATION-SERVICE
+          predicates:
+            - Path=/api/v1/auth/**
+        - id: notification-service
+          uri: lb:http://NOTIFICATION-SERVICE
+          predicates:
+            - Path=/api/v1/notifications/**
+        - id: ranking-service
+          uri: lb:http://RANKING-SERVICE
+          predicates:
+            - Path=/api/v1/ranking/**
+        - id: reservation-service
+          uri: lb:http://RESERVATION-SERVICE
+          predicates:
+            - Path=/api/v1/reservations/**
+        - id: restaurant-service
+          uri: lb:http://RESTAURANT-SERVICE
+          predicates:
+            - Path=/api/v1/restaurants/**
+        - id: review-service
+          uri: lb:http://REVIEW-SERVICE
+          predicates:
+            - Path=/api/v1/reviews/**
+        - id: user-service
+          uri: lb:http://USER-SERVICE
+          predicates:
+            - Path=/api/v1/users/**

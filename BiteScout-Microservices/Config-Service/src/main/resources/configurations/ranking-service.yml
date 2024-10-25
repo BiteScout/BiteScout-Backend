@@ -1,0 +1,19 @@
+server:
+  port: 8040
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/rankings
+    username: user
+    password: password
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+application:
+  config:
+    reviews-url: http://localhost:8222/api/v1/reviews
+    restaurants-url: http://localhost:8222/api/v1/restaurants
+    reservations-url: http://localhost:8222/api/v1/reservations
