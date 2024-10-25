@@ -1,0 +1,11 @@
+server:
+  port: 8030
+spring:
+  data:
+    mongodb:
+      username: user
+      password: password
+      host: localhost
+      port: 27017
+      database: reviews
+      authentication-database: admin
