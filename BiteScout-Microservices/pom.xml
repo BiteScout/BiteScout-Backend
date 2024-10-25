@@ -40,14 +40,12 @@
 
     <modules>
         <module>Admin-Service</module>
-        <module>Analytics-Service</module>
-        <module>Geo-Location-Service</module>
+        <module>Authentication-Service</module>
         <module>Notification-Service</module>
-        <module>Promotion-Service</module>
+        <module>Ranking-Service</module>
         <module>Reservation-Service</module>
         <module>Restaurant-Service</module>
         <module>Review-Service</module>
-        <module>Search-Service</module>
         <module>User-Service</module>
     </modules>
 
