@@ -39,7 +39,7 @@ public class NotificationController {
             @PathVariable("notification-id") Long notificationId,
             @RequestHeader(value = "User-Id") Long userId
     ) {
-        return ResponseEntity.ok(service.markAsSeen(userId, notificationId));
+        return ResponseEntity.ok(service.markAsSeen(notificationId, userId));
     }
 
 

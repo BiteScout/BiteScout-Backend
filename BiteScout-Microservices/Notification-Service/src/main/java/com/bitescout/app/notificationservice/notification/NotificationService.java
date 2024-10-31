@@ -4,6 +4,7 @@ import com.bitescout.app.notificationservice.exception.NotificationNotFoundExcep
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,13 +25,14 @@ public class NotificationService {
         return repository.findByUserId(userId)
                 .stream()
                 .map(mapper::toNotificationResponse)
+                .sorted(Comparator.comparing(NotificationResponse::createdAt).reversed())
                 .collect(Collectors.toList());
     }
 
     public NotificationResponse markAsSeen(Long notificationId, Long userId){
         var notification = repository.findByIdAndUserId(notificationId, userId)
                 .orElseThrow(()->new NotificationNotFoundException(String.format(
-                        "Notification with id %d and user id %d not found", notificationId, userId)
+                        "Notification with id %d for user id %d not found", notificationId, userId)
                 ));
         notification.setRead(true);
         repository.save(notification);
