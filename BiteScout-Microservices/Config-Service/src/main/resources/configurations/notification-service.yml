@@ -1,14 +1,16 @@
 server:
   port: 8090
 spring:
-  data:
-    mongodb:
-      username: user
-      password: password
-      host: localhost
-      port: 27017
-      database: notifications
-      authentication-database: admin
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/notifications
+    username: user
+    password: password
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
   kafka:
     consumer:
       bootstrap-servers: localhost:9092
@@ -18,7 +20,7 @@ spring:
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
         spring.json.trusted.packages: '*'
-        spring.json.type.mapping: reservationRequest:com.bitescout.app.restaurantservice.kafka.ReservationRequest,specialOffer:com.bitescout.app.restaurantservice.kafka.SpecialOffer
+        spring.json.type.mapping: reservationRequest:com.bitescout.app.notificationservice.kafka.ReservationRequest,specialOffer:com.bitescout.app.notificationservice.kafka.SpecialOffer
   mail:
     host: localhost
     port: 1025

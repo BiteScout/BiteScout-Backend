@@ -5,7 +5,6 @@
     <option name="originalFiles">
       <list>
         <option value="$PROJECT_DIR$/BiteScout-Microservices/Admin-Service/pom.xml" />
-        <option value="$PROJECT_DIR$/BiteScout-Microservices/Authentication-Service/pom.xml" />
         <option value="$PROJECT_DIR$/BiteScout-Microservices/Gateway-Service/Gateway-Service_/pom.xml" />
         <option value="$PROJECT_DIR$/BiteScout-Microservices/Notification-Service/pom.xml" />
         <option value="$PROJECT_DIR$/BiteScout-Microservices/Ranking-Service/pom.xml" />
