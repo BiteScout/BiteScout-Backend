@@ -1,0 +1,49 @@
+name: Java CI with Maven
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+
+    # Build each service individually
+    - name: Build Gateway Service
+      run: mvn -B clean package --file BiteScout-Microservices/Gateway-Service/pom.xml
+
+    - name: Build Authentication Service
+      run: mvn -B clean package --file BiteScout-Microservices/Authentication-Service/pom.xml
+
+    - name: Build Restaurant Service
+      run: mvn -B clean package --file BiteScout-Microservices/Restaurant-Service/pom.xml
+
+    - name: Build Reservation Service
+      run: mvn -B clean package --file BiteScout-Microservices/Reservation-Service/pom.xml
+
+    - name: Build Notification Service
+      run: mvn -B clean package --file BiteScout-Microservices/Notification-Service/pom.xml
+
+    - name: Build Review Service
+      run: mvn -B clean package --file BiteScout-Microservices/Review-Service/pom.xml
+
+    - name: Build Ranking Service
+      run: mvn -B clean package --file BiteScout-Microservices/Ranking-Service/pom.xml
+
+    - name: Build Config Server
+      run: mvn -B clean package --file BiteScout-Microservices/Config-Server/pom.xml
+
+    - name: Build Discovery Service
+      run: mvn -B clean package --file BiteScout-Microservices/Discovery-Service/pom.xml
