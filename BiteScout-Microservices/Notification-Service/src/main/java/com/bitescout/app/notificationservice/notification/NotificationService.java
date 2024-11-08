@@ -1,6 +1,8 @@
 package com.bitescout.app.notificationservice.notification;
 
 import com.bitescout.app.notificationservice.exception.NotificationNotFoundException;
+import com.bitescout.app.notificationservice.notification.dto.NotificationRequest;
+import com.bitescout.app.notificationservice.notification.dto.NotificationResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

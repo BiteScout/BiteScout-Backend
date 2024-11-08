@@ -1,8 +1,7 @@
-package com.bitescout.app.notificationservice.notification;
+package com.bitescout.app.notificationservice.notification.dto;
 
-import org.apache.kafka.common.protocol.types.Field;
+import com.bitescout.app.notificationservice.notification.NotificationType;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public record NotificationResponse(
