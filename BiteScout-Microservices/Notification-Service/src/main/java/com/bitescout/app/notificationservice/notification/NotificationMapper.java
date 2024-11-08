@@ -1,5 +1,7 @@
 package com.bitescout.app.notificationservice.notification;
 
+import com.bitescout.app.notificationservice.notification.dto.NotificationRequest;
+import com.bitescout.app.notificationservice.notification.dto.NotificationResponse;
 import org.springframework.stereotype.Service;
 
 @Service

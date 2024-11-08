@@ -1,5 +1,7 @@
 package com.bitescout.app.notificationservice.notification;
 
+import com.bitescout.app.notificationservice.notification.dto.NotificationRequest;
+import com.bitescout.app.notificationservice.notification.dto.NotificationResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,6 +17,8 @@ public class NotificationController {
 
     private final NotificationService service;
 
+    //when the project progresses notifications will only be created via NotificationsConsumer and this
+    //endpoint will be deleted, for now it's good for testing purposes.
     @PostMapping
     public ResponseEntity<NotificationResponse> createNotification(
             @RequestBody @Valid NotificationRequest request,
@@ -24,6 +28,7 @@ public class NotificationController {
                 .status(HttpStatus.CREATED)
                 .body(service.createNotification(request, userId));
     }
+
 
     @GetMapping
     public ResponseEntity<List<NotificationResponse>> getNotifications(

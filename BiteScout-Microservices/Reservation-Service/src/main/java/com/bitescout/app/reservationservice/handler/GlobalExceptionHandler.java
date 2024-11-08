@@ -1,6 +1,7 @@
-package com.bitescout.app.notificationservice.handler;
+package com.bitescout.app.reservationservice.handler;
 
-import com.bitescout.app.notificationservice.exception.NotificationNotFoundException;
+import com.bitescout.app.reservationservice.exception.InvalidStatusRequestException;
+import com.bitescout.app.reservationservice.exception.ReservationNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -13,15 +14,22 @@ import java.util.HashMap;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(NotificationNotFoundException.class)
-    public ResponseEntity<String> handle(NotificationNotFoundException exp){
+    @ExceptionHandler(ReservationNotFoundException.class)
+    public ResponseEntity<String> handle(ReservationNotFoundException exp){
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(exp.getMessage());
+    }
+
+    @ExceptionHandler(InvalidStatusRequestException.class)
+    public ResponseEntity<String> handle(InvalidStatusRequestException exp){
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(exp.getMessage());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException exp){
+    public ResponseEntity<ErrorResponse> handleReservationNotFoundException(MethodArgumentNotValidException exp){
 
         var errors = new HashMap<String, String>();
         exp.getBindingResult().getAllErrors()
