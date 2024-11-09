@@ -20,7 +20,7 @@ spring:
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
         spring.json.trusted.packages: '*'
-        spring.json.type.mapping: reservationRequest:com.bitescout.app.notificationservice.kafka.ReservationRequest,specialOffer:com.bitescout.app.notificationservice.kafka.SpecialOffer
+        spring.json.type.mapping: reservationStatusMessage:com.bitescout.app.notificationservice.kafka.reservation.ReservationStatusMessage,specialOfferMessage:com.bitescout.app.notificationservice.kafka.offer.SpecialOfferMessage
   mail:
     host: localhost
     port: 1025

@@ -26,7 +26,7 @@
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="Admin-Service" options="-parameters" />
-      <module name="Authentication-Service" options="-parameters" />
+      <module name="Authentication-Service" options="" />
       <module name="Config-Service" options="-parameters" />
       <module name="Discovery-Service" options="-parameters" />
       <module name="Gateway-Service" options="-parameters" />
