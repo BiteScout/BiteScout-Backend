@@ -8,6 +8,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="Config-Service" />
+        <module name="Authentication-Service" />
         <module name="Review-Service" />
         <module name="Restaurant-Service" />
         <module name="Notification-Service" />
@@ -20,7 +21,6 @@
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="Admin-Service" target="17" />
-      <module name="Authentication-Service" target="1.8" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
