@@ -1,0 +1,66 @@
+# Target directory (build output)
+target/
+
+# Maven-specific files
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+# Maven Wrapper binary jar
+.mvn/wrapper/maven-wrapper.jar
+
+# IntelliJ IDEA-specific files and directories
+.idea/
+*.iml
+*.iws
+
+# VSCode-specific files
+.vscode/
+
+# Eclipse-specific files
+.project
+.classpath
+.settings/
+# Other Eclipse files
+*.launch
+# Eclipse WTP (Web Tools Platform) specific
+.settings/
+wtpwebapps/
+
+# MacOS-specific files
+.DS_Store
+
+# Linux-specific files
+*~
+.nfs*
+
+# Windows-specific files
+Thumbs.db
+Desktop.ini
+
+# Logs and temporary files
+*.log
+*.tmp
+*.bak
+*.swp
+*.swo
+*.swn
+
+# Node.js dependencies (if applicable)
+node_modules/
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Package manager lock files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
