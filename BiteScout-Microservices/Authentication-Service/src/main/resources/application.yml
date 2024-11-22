@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: authentication-service # this name has to EXACTLY match the .yml file name in config service
+  config:
+      import: optional:configserver:http://localhost:8888

@@ -36,3 +36,7 @@ spring:
         connectiontimeout: 5000
         timeout: 3000
         writetimeout: 5000
+application:
+  config:
+    restaurants-url: http://localhost:8222/api/v1/restaurants
+    users-url: http://localhost:8222/api/v1/users
