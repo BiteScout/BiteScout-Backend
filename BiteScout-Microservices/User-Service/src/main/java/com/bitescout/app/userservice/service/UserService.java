@@ -1,11 +1,15 @@
 package com.bitescout.app.userservice.service;
+import com.bitescout.app.userservice.client.FileStorageClient;
 import com.bitescout.app.userservice.dto.*;
 import com.bitescout.app.userservice.entity.*;
 import com.bitescout.app.userservice.repository.*;
 
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -14,46 +18,51 @@ import java.util.stream.Collectors;
 public class UserService {
     private final UserRepository userRepository;
     private final FavoriteRepository favoriteRepository;
+    private final PasswordEncoder passwordEncoder;
     private final ModelMapper modelMapper;
+    private final FileStorageClient fileStorageClient;
 
-    public UserResponseDTO createUser(UserRequestDTO userRequestDTO) {
-        User user = modelMapper.map(userRequestDTO, User.class);
+    // USER SERVICES //
+
+    public UserDTO createUser(RegisterRequestDTO request) {
+        User user = User.builder()
+                .username(request.getUsername())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .email(request.getEmail())
+                .role(request.getRole())
+                .build();
+
         user = userRepository.save(user);
-        return modelMapper.map(user, UserResponseDTO.class);
+        return modelMapper.map(user, UserDTO.class);
+
     }
 
-    public UserResponseDTO getUser(String userId) {
+    public UserDTO getUser(String userId) {
         User user = userRepository.findById(UUID.fromString(userId)).orElseThrow(() -> new RuntimeException("User not found"));
-        return modelMapper.map(user, UserResponseDTO.class);
+        return modelMapper.map(user, UserDTO.class);
     }
 
-    public UserResponseDTO updateUser(String userId, UserRequestDTO userRequestDTO) {
-        User user = userRepository.findById(UUID.fromString(userId))
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    private UserDetails updateUserDetails(UserDetails toUpdate, UserDetails request, MultipartFile file) {
+        toUpdate = toUpdate == null ? new UserDetails() : toUpdate;
 
-        // Update only non-null fields
-        if (userRequestDTO.getFirstName() != null) user.setFirstName(userRequestDTO.getFirstName());
-        if (userRequestDTO.getLastName() != null) user.setLastName(userRequestDTO.getLastName());
-        if (userRequestDTO.getEmail() != null) user.setEmail(userRequestDTO.getEmail());
-        if (userRequestDTO.getPassword() != null) user.setPassword(userRequestDTO.getPassword());
-        if (userRequestDTO.getPhoneNumber() != null) user.setPhoneNumber(userRequestDTO.getPhoneNumber());
-        if (userRequestDTO.getAddress() != null) user.setAddress(userRequestDTO.getAddress());
-        if (userRequestDTO.getProfilePicture() != null) user.setProfilePicture(userRequestDTO.getProfilePicture());
-        if (userRequestDTO.getRole() != null) user.setRole(userRequestDTO.getRole());
-        if (userRequestDTO.getIsVerified() != null) user.setIsVerified(userRequestDTO.getIsVerified());
-        if (userRequestDTO.getVerificationToken() != null) user.setVerificationToken(userRequestDTO.getVerificationToken());
-        if (userRequestDTO.getOauthProvider() != null) user.setOauthProvider(userRequestDTO.getOauthProvider());
-        if (userRequestDTO.getOauthId() != null) user.setOauthId(userRequestDTO.getOauthId());
+        if (file != null) {
+            String profilePicture = fileStorageClient.uploadImageToFIleSystem(file).getBody();
+            if (profilePicture != null) {
+                fileStorageClient.deleteImageFromFileSystem(toUpdate.getProfilePicture());
+                toUpdate.setProfilePicture(profilePicture);
+            }
+        }
 
-        return modelMapper.map(userRepository.save(user), UserResponseDTO.class);
+        modelMapper.map(request, toUpdate);
+        return toUpdate;
     }
+    public UserDTO updateUser(UserUpdateRequestDTO request, MultipartFile profilePicture) {
+        User user = userRepository.findById(UUID.fromString(request.getId())).orElseThrow(() -> new RuntimeException("User not found"));
 
-
-    public UserResponseDTO updateProfilePicture(String userId, ProfilePictureRequestDTO profilePictureRequestDTO) {
-        User user = userRepository.findById(UUID.fromString(userId)).orElseThrow(() -> new RuntimeException("User not found"));
-        user.setProfilePicture(profilePictureRequestDTO.getProfilePicture());
+        request.setUserDetails(updateUserDetails(user.getUserDetails(), request.getUserDetails(), profilePicture));
+        modelMapper.map(request, user);
         user = userRepository.save(user);
-        return modelMapper.map(user, UserResponseDTO.class);
+        return modelMapper.map(user, UserDTO.class);
     }
 
     public void deleteUser(String userId) {
@@ -61,17 +70,19 @@ public class UserService {
         userRepository.delete(user);
     }
 
-    public List<UserResponseDTO> getAllUsers() {
+    public List<UserDTO> getAllUsers() {
         List<User> users = userRepository.findAll();
-        return users.stream().map(user -> modelMapper.map(user, UserResponseDTO.class)).collect(Collectors.toList());
+        return users.stream().map(user -> modelMapper.map(user, UserDTO.class)).collect(Collectors.toList());
     }
 
-    public FavoriteResponseDTO addFavorite(String userId, FavoriteRequestDTO favoriteRequestDTO) {
+
+    // FAVORITE SERVICES //
+
+    public FavoriteResponseDTO addFavorite(String userId, String restaurantId) {
         User user = userRepository.findById(UUID.fromString(userId)).orElseThrow(() -> new RuntimeException("User not found"));
-        // create favorite with builder
         Favorite favorite = Favorite.builder()
                 .user(user)
-                .restaurantId(UUID.fromString(favoriteRequestDTO.getRestaurantId()))
+                .restaurantId(UUID.fromString(restaurantId))
                 .build();
 
         favorite = favoriteRepository.save(favorite);
@@ -99,6 +110,7 @@ public class UserService {
                 .id(favorite.getId().toString())
                 .userId(favorite.getUser().getId().toString())
                 .restaurantId(favorite.getRestaurantId().toString())
+                .favoritedAt(favorite.getFavoritedAt().toString())
                 .build();
     }
 

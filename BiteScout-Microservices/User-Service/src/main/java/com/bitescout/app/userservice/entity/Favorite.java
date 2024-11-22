@@ -14,7 +14,7 @@ import java.util.UUID;
 @Table(name = "favorites")
 public class Favorite {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
