@@ -18,27 +18,27 @@ public class GatewayConfig {
     @Bean
     public RouteLocator routes(RouteLocatorBuilder builder) {
         return builder.routes()
-                .route("authentication-service", r -> r.path("/api/v1/auth/**")
+                .route("authentication-service", r -> r.path("/v1/auth/**")
                         .uri("lb://AUTHENTICATION-SERVICE"))
 
-                .route("notification-service", r -> r.path("/api/v1/notifications/**")
+                .route("notification-service", r -> r.path("/v1/notifications/**")
                         .filters(f -> f.filter(filter)) // Apply the JWT filter here
                         .uri("lb://NOTIFICATION-SERVICE"))
 
-                .route("ranking-service", r -> r.path("/api/v1/ranking/**")
+                .route("ranking-service", r -> r.path("/v1/ranking/**")
                         .uri("lb://RANKING-SERVICE"))
 
-                .route("reservation-service", r -> r.path("/api/v1/reservations/**")
+                .route("reservation-service", r -> r.path("/v1/reservations/**")
                         .filters(f -> f.filter(filter))
                         .uri("lb://RESERVATION-SERVICE"))
 
-                .route("restaurant-service", r -> r.path("/api/v1/restaurants/**")
+                .route("restaurant-service", r -> r.path("/v1/restaurants/**")
                         .uri("lb://RESTAURANT-SERVICE"))
 
-                .route("review-service", r -> r.path("/api/v1/reviews/**")
+                .route("review-service", r -> r.path("/v1/reviews/**")
                         .uri("lb://REVIEW-SERVICE"))
 
-                .route("user-service", r -> r.path("/api/v1/users/**")
+                .route("user-service", r -> r.path("/v1/users/**")
                         .filters(f -> f.filter(filter))
                         .uri("lb://USER-SERVICE"))
 

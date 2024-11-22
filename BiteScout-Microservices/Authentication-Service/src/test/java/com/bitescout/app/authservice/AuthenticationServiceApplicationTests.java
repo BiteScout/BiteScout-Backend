@@ -1,4 +1,4 @@
-package com.bitescout.app.authenticationservice;
+package com.bitescout.app.authservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
