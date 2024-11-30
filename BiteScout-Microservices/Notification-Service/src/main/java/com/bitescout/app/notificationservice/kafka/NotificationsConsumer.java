@@ -1,18 +1,25 @@
 package com.bitescout.app.notificationservice.kafka;
 
+import com.bitescout.app.notificationservice.email.EmailService;
 import com.bitescout.app.notificationservice.kafka.offer.SpecialOfferMessage;
 import com.bitescout.app.notificationservice.kafka.reservation.IncomingReservationMessage;
 import com.bitescout.app.notificationservice.kafka.reservation.ReservationStatus;
 import com.bitescout.app.notificationservice.kafka.reservation.ReservationStatusMessage;
+import com.bitescout.app.notificationservice.kafka.review.ReviewInteractionMessage;
 import com.bitescout.app.notificationservice.notification.Notification;
 import com.bitescout.app.notificationservice.notification.NotificationRepository;
 import com.bitescout.app.notificationservice.notification.NotificationType;
 import com.bitescout.app.notificationservice.restaurant.RestaurantClient;
 import com.bitescout.app.notificationservice.restaurant.RestaurantResponse;
+import com.bitescout.app.notificationservice.review.ReviewClient;
+import com.bitescout.app.notificationservice.review.ReviewResponse;
 import com.bitescout.app.notificationservice.user.UserClient;
 import com.bitescout.app.notificationservice.user.UserResponse;
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.common.protocol.types.Field;
+import org.aspectj.weaver.ast.Not;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
@@ -32,46 +39,72 @@ public class NotificationsConsumer {
     //to get the user's email and phone number information
     private final RestaurantClient restaurantClient;
     private final UserClient userClient;
+    private final ReviewClient reviewClient;
+    private final EmailService emailService;
 
     //these methods are not complete, email and text message features will be added later
     //notification goes to customer, when restaurant owner accepts/rejects their reservation request
     @KafkaListener(topics = "reservation-status-topic")
-    public void consumeReservationStatusTopic(ReservationStatusMessage message){
+    public void consumeReservationStatusTopic(ReservationStatusMessage message) throws MessagingException {
         log.info(format("Consuming reservation status message from reservation-status-topic %s", message));
 
         String status = message.reservationStatus() == ReservationStatus.ACCEPTED ? "accepted" : "rejected";
         String restaurantName = restaurantClient.getRestaurant(message.restaurantId()).get().name();
-
+        UserResponse userResponse = userClient.getUser(message.customerId()).get();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm dd-MM");
         String formattedTime = message.reservationTime().format(formatter);
 
         repository.save(Notification.builder()
                 .userId(message.customerId())
                 //Message subject to change
-                .message(format("Your reservation request to restaurant %s at time %s was %s",
-                        restaurantName, formattedTime, status))
+                .message(format("Your reservation request with id %d to restaurant %s at time %s was %s",
+                        message.id(), restaurantName, formattedTime, status))
                 .notificationType(NotificationType.RESERVATION_STATUS_NOTIFICATION)
                 .build());
+
+        emailService.sendReservationStatusEmail(
+                userResponse.email(),
+                userResponse.firstName() + " " + userResponse.lastName(),
+                restaurantName,
+                status,
+                formattedTime,
+                message.id()
+);
     }
 
     //notification goes to restaurant owner, when someone makes a reservation request
     @KafkaListener(topics = "incoming-reservation-topic")
-    public void consumerIncomingReservationTopic(IncomingReservationMessage message){
+    public void consumerIncomingReservationTopic(IncomingReservationMessage message) throws MessagingException {
         log.info(format("Consuming incoming reservation message from incoming-reservation-topic %s",message));
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm dd-MM");
         String formattedTime = message.createdAt().format(formatter);
 
-        Long ownerId = restaurantClient.getRestaurant(message.restaurantId()).get().ownerId();
-        UserResponse userResponse = userClient.getUser(message.customerId());
+        RestaurantResponse response = restaurantClient.getRestaurant(message.restaurantId()).get();
+        String restaurantName = response.name();
+        UserResponse owner = userClient.getUser(response.ownerId()).get(); //this is restaurant owner
+        UserResponse customer = userClient.getUser(message.customerId()).get();
 
         repository.save(Notification.builder()
-                .userId(ownerId)
+                .userId(response.ownerId())
                 //Message subject to change
-                .message(format("A reservation request was made by customer id %d for time %s",
-                        message.customerId(), formattedTime))
+                .message(format("A reservation request with id %d to your restaurant %s was made by " +
+                                "%s for time %s",
+                        message.id(),
+                        restaurantName,
+                        customer.firstName() + " " + customer.lastName(),
+                        formattedTime))
                 .notificationType(NotificationType.INCOMING_RESERVATION_NOTIFICATION)
                 .build());
+
+        emailService.sendIncomingReservationEmail(
+                owner.email(),
+                owner.firstName() + " " + owner.lastName(),
+                restaurantName,
+                customer.firstName() + " " + customer.lastName(),
+                formattedTime,
+                message.id()
+        );
     }
 
     //goes to all users that have favorited a restaurant, when that restaurant posts a special offer
@@ -92,12 +125,35 @@ public class NotificationsConsumer {
             repository.save(Notification.builder()
                     .userId(user.id())
                     .message(String.format(
-                            "One of your favorite restaurants, %s, has a special offer!" +
-                                    " Don't miss out on this exclusive deal! Only available between" +
-                                    " %s and %s!", restaurantName, startDate, endDate)
+                            "One of your favorite restaurants, %s, has a special offer between" +
+                                    " %s and %s.", restaurantName, startDate, endDate)
                             )
                     .notificationType(NotificationType.SPECIAL_OFFER_NOTIFICATION)
                     .build());
         }
+    }
+
+    @KafkaListener(topics = "review-interaction-topic")
+    public void consumeReviewInteractionTopic(ReviewInteractionMessage message){
+        log.info("Consuming review message from review-interaction-topic");
+
+        //x replied :
+
+        ReviewResponse reviewResponse = reviewClient.getReview(message.reviewId()).get();
+        UserResponse reviewOwnerUser = userClient.getUser(reviewResponse.customerId()).get();
+        UserResponse interactingUser = userClient.getUser(message.userId()).get();
+
+
+        repository.save(Notification.builder()
+                .userId(reviewOwnerUser.id())
+                .message(String.format(
+                        "%s %s has %s your comment: %s",
+                        interactingUser.firstName(),
+                        interactingUser.lastName(),
+                        message.interactionType().getTemplatePhrase(),
+                        message.replyText()             //reminder: this is very inefficient because it repeats
+                )).build());                            //information stored in reviews table. may need to
+                                                        //change the structure of review table, like adding
+                                                        //children (reviews) column to review
     }
 }

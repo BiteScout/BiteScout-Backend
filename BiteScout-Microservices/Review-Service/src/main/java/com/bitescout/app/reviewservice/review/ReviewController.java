@@ -29,7 +29,7 @@ public class ReviewController {
 
     //Get all reviews
     @GetMapping("/restaurants/{restaurant-id}")
-    public ResponseEntity<List<ReviewResponse>> getReviews(@RequestHeader(value = "Restaurant-Id") Long restaurantId) {
+    public ResponseEntity<List<ReviewResponse>> getReviews(@PathVariable(value = "restaurant-id") Long restaurantId) {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(reviewService.getReviews(restaurantId));

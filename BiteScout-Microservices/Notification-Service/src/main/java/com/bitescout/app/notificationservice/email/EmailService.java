@@ -11,8 +11,6 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,24 +29,25 @@ public class EmailService {
             String destinationEmail,
             String customerName,
             String restaurantName,
-            LocalDateTime reservationTime
+            String status,
+            String reservationTime,
+            Long reservationId
     ) throws MessagingException {
         MimeMessage mimeMessage = mailSender.createMimeMessage();
         MimeMessageHelper messageHelper = new MimeMessageHelper(
                 mimeMessage,
                 MimeMessageHelper.MULTIPART_MODE_RELATED,
                 UTF_8.name());
-        messageHelper.setFrom("noreply@bitescout.com");  //email subject to change
+        messageHelper.setFrom("infobitescout@gmail.com");  //email subject to change
 
         final String templateName = EmailTemplates.RESERVATION_STATUS_NOTIFICATION.getTemplate();
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm dd-MM");
-        String formattedReservationTime = reservationTime.format(formatter);
 
         Map<String, Object> variables = new HashMap<>();
         variables.put("customer-name", customerName);
         variables.put("restaurant-name", restaurantName);
-        variables.put("reservation-time", formattedReservationTime);
+        variables.put("reservation-time", reservationTime);
+        variables.put("status", status);
+        variables.put("reservation-id", reservationId);
 
         Context context = new Context();
         context.setVariables(variables);
@@ -66,6 +65,48 @@ public class EmailService {
             log.warn(String.format("WARNING - Can not send email to %s", destinationEmail));
         }
 
+    }
+
+    @Async
+    public void sendIncomingReservationEmail(
+            String destinationEmail,
+            String restaurantOwnerName,
+            String restaurantName,
+            String customerName,
+            String reservationTime,
+            Long reservationId
+    ) throws MessagingException {
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+        MimeMessageHelper messageHelper = new MimeMessageHelper(
+                mimeMessage,
+                MimeMessageHelper.MULTIPART_MODE_RELATED,
+                UTF_8.name());
+        messageHelper.setFrom("infobitescout@gmail.com");  //email subject to change
+
+        final String templateName = EmailTemplates.INCOMING_RESERVATION_NOTIFICATION.getTemplate();
+
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("restaurant-owner-name", restaurantOwnerName);
+        variables.put("restaurant-name", restaurantName);
+        variables.put("customer-name", customerName);
+        variables.put("reservation-time", reservationTime);
+        variables.put("reservation-id", reservationId);
+
+        Context context = new Context();
+        context.setVariables(variables);
+        messageHelper.setSubject(EmailTemplates.RESERVATION_STATUS_NOTIFICATION.getSubject());
+
+        try{
+            String htmlTemplate = templateEngine.process(templateName, context);
+            messageHelper.setText(htmlTemplate, true);
+
+            messageHelper.setTo(destinationEmail);
+            mailSender.send(mimeMessage);
+            log.info(String.format("INFO - Email successfully sent to %s with template %s",
+                    destinationEmail, templateName));
+        } catch (MessagingException e){
+            log.warn(String.format("WARNING - Can not send email to %s", destinationEmail));
+        }
     }
 
 }

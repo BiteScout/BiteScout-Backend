@@ -3,7 +3,3 @@ spring:
     import: optional:configserver:http://localhost:8888
   application:
     name: review-service
-  data:
-    mongodb:
-      uri: mongodb+srv://erolkocoglu44:VStZ2vYvORLsTRNU@cluster0.hckml.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
-      database: BiteScout

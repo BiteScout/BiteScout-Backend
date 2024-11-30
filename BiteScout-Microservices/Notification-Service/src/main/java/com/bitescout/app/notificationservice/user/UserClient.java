@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
+import java.util.Optional;
 
 @FeignClient(
         name = "user-service",
@@ -16,5 +17,5 @@ public interface UserClient {
     public List<UserResponse> getUsersByFavoritedRestaurant(@PathVariable("restaurant-id") Long restaurantId);
 
     @GetMapping("/{user-id}")
-    public UserResponse getUser(@PathVariable("user-id") Long userId);
+    public Optional<UserResponse> getUser(@PathVariable("user-id") Long userId);
 }

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #135c43; /* Dark greenish background */
+            color: #333333;
+            margin: 0;
+            padding: 0;
+        }
+        .email-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #023020; /* Dark green border */
+            border-radius: 4px; /* Less rounded corners */
+            background-color: #ffffff; /* White background for content */
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            font-size: 22px;
+            font-weight: bold;
+            color: #ffffff; /* White text for header */
+            margin-bottom: 15px;
+            text-align: center;
+            background-color: #023020; /* Dark green background */
+            padding: 10px;
+            border-radius: 4px; /* Less rounded corners */
+        }
+        .content {
+            font-size: 16px;
+            margin-bottom: 20px;
+            color: #333333;
+        }
+        .status {
+            font-weight: bold;
+            color: {{ status == 'accepted' ? '#023020' : '#c62828' }}; /* Dark green for accepted, red for rejected */
+        }
+        .footer {
+            font-size: 12px;
+            color: #ffffff; /* White text for footer */
+            text-align: center;
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #023020; /* Dark green footer background */
+            border-radius: 4px; /* Less rounded corners */
+        }
+        .footer a {
+            color: #ffffff;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+<div class="email-container">
+    <div class="header">
+        Bitescout Reservation Update
+    </div>
+    <div class="content">
+        Dear <strong>{{ customer-name }}</strong>,
+        <p>
+            We wanted to let you know that your reservation with ID <strong>{{ id }}</strong> at <strong>{{ restaurant-name }}</strong> for
+            <strong>{{ reservation-time }}</strong> has been
+            <span class="status">{{ status }}</span>.
+        </p>
+        <p>
+            If you have any questions or need to update your reservation, please contact the restaurant directly.
+        </p>
+    </div>
+    <div class="footer">
+        This message was sent to you by <strong>Bitescout</strong>.
+        <br>
+        Visit our website at <a href="https://www.bitescout.com">www.bitescout.com</a>.
+    </div>
+</div>
+</body>
+</html>
