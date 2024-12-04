@@ -1,7 +1,6 @@
 package com.bitescout.app.authservice.service;
 
 import com.bitescout.app.authservice.client.UserServiceClient;
-import com.bitescout.app.authservice.dto.RegisterDto;
 import com.bitescout.app.authservice.dto.TokenDto;
 import com.bitescout.app.authservice.dto.UserDto;
 import com.bitescout.app.authservice.email.EmailService;
@@ -39,7 +38,7 @@ public class AuthService {
         else throw new WrongCredentialsException("Wrong credentials");
     }
 
-    public RegisterDto register(RegisterRequest request) {
+    public TokenDto register(RegisterRequest request) {
         UserDto userDto = userServiceClient.save(request).getBody();
 
         String token = UUID.randomUUID().toString();
@@ -55,10 +54,8 @@ public class AuthService {
         } catch (MessagingException e) {
             throw new RuntimeException("Failed to send verification email", e);
         }
-        return RegisterDto.builder()
-                .username(userDto.getUsername())
-                .email(userDto.getEmail())
-                .id(userDto.getId())
+        return TokenDto.builder()
+                .token(jwtService.generateToken(userDto.getUsername()))
                 .build();
     }
 

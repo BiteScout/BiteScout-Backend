@@ -1,6 +1,5 @@
 package com.bitescout.app.authservice.controller;
 
-import com.bitescout.app.authservice.dto.RegisterDto;
 import com.bitescout.app.authservice.dto.TokenDto;
 import com.bitescout.app.authservice.request.LoginRequest;
 import com.bitescout.app.authservice.request.RegisterRequest;
@@ -27,7 +26,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<RegisterDto> register(@Validated @RequestBody RegisterRequest request) {
+    public ResponseEntity<TokenDto> register(@Validated @RequestBody RegisterRequest request) {
         return ResponseEntity.ok(authService.register(request));
     }
 
