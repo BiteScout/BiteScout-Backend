@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #135c43; /* Dark greenish background */
+            color: #333333;
+            margin: 0;
+            padding: 0;
+        }
+        .email-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #023020; /* Dark green border */
+            border-radius: 4px; /* Less rounded corners */
+            background-color: #ffffff; /* White background for content */
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            font-size: 22px;
+            font-weight: bold;
+            color: #ffffff; /* White text for header */
+            margin-bottom: 15px;
+            text-align: center;
+            background-color: #023020; /* Dark green background */
+            padding: 10px;
+            border-radius: 4px; /* Less rounded corners */
+        }
+        .content {
+            font-size: 16px;
+            margin-bottom: 20px;
+            color: #333333;
+        }
+        .footer {
+            font-size: 12px;
+            color: #ffffff; /* White text for footer */
+            text-align: center;
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #023020; /* Dark green footer background */
+            border-radius: 4px; /* Less rounded corners */
+        }
+        .footer a {
+            color: #ffffff;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+<div class="email-container">
+    <div class="header">
+        New Reservation Request
+    </div>
+    <div class="content">
+        Dear <strong>{{ restaurant-owner-name }}</strong>,
+        <p>
+            A new reservation request has been made for your restaurant, <strong>{{ restaurant-name }}</strong>.
+        </p>
+        <p>
+            <strong>Details:</strong>
+        <ul>
+            <li><strong>Reservation ID:</strong> {{ reservation-id }}</li>
+            <li><strong>Customer Name:</strong> {{ customer-name }}</li>
+            <li><strong>Reservation Time:</strong> {{ reservation-time }}</li>
+        </ul>
+        </p>
+        <p>
+            Please log in to your Bitescout account to view or manage this reservation.
+        </p>
+    </div>
+    <div class="footer">
+        This message was sent to you by <strong>Bitescout</strong>.
+        <br>
+        Visit our website at <a href="https://www.bitescout.com">www.bitescout.com</a>.
+    </div>
+</div>
+</body>
+</html>

@@ -1,7 +1,6 @@
-package com.bitescout.app.reviewservice.review.dto;
+package com.bitescout.app.notificationservice.review;
 
 import java.time.LocalDateTime;
-
 
 public record ReviewResponse (
         Long id,
