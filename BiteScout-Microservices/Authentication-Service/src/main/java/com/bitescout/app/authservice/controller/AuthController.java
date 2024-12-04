@@ -30,4 +30,15 @@ public class AuthController {
     public ResponseEntity<RegisterDto> register(@Valid @RequestBody RegisterRequest request) {
         return ResponseEntity.ok(authService.register(request));
     }
+
+    // user to verify email address. After clicking on the link in the email,
+    // the user will be redirected to this endpoint to verify the email address
+    // and enable the user in the database
+    @GetMapping("/verify")
+    public ResponseEntity<String> verifyEmail(@RequestParam String token) {
+        authService.verifyToken(token);
+        return ResponseEntity.ok("Email verified successfully");
+    }
+
+
 }
