@@ -30,11 +30,19 @@ public class UserService {
                 .password(passwordEncoder.encode(request.getPassword()))
                 .email(request.getEmail())
                 .role(request.getRole())
+                .enabled(false)
                 .build();
 
         user = userRepository.save(user);
         return modelMapper.map(user, UserDTO.class);
 
+    }
+
+    public UserDTO enableUser(UserDTO userDTO) {
+        User user = userRepository.findById(userDTO.getId()).orElseThrow(() -> new RuntimeException("User not found"));
+        user.setEnabled(true);
+        user = userRepository.save(user);
+        return modelMapper.map(user, UserDTO.class);
     }
 
     public UserDTO getUser(String userId) {

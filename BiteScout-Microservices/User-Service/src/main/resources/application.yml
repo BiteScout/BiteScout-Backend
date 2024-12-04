@@ -1,6 +1,5 @@
 spring:
   application:
     name: user-service # this name has to EXACTLY match the .yml file name in config service
-  cloud:
-    config:
+  config:
       import: optional:configserver:http://localhost:8888

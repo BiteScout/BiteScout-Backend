@@ -1,11 +1,14 @@
 package com.bitescout.app.userservice.controller;
-import com.bitescout.app.userservice.dto.*;
-import com.bitescout.app.userservice.entity.User;
-import com.bitescout.app.userservice.service.UserService;
 
+import com.bitescout.app.userservice.dto.FavoriteResponseDTO;
+import com.bitescout.app.userservice.dto.RegisterRequestDTO;
+import com.bitescout.app.userservice.dto.UserDTO;
+import com.bitescout.app.userservice.dto.UserUpdateRequestDTO;
+import com.bitescout.app.userservice.service.UserService;
 import jakarta.validation.Valid;
-import lombok.*;
-import org.springframework.http.*;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,6 +26,11 @@ public class UserController {
     @PostMapping("/save")
     public ResponseEntity<UserDTO> createUser(@Valid @RequestBody RegisterRequestDTO RegisterRequest) {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(RegisterRequest));
+    }
+
+    @PutMapping("/enable-user")
+    public ResponseEntity<UserDTO> enableUser(@RequestBody UserDTO userDto) {
+        return ResponseEntity.ok(userService.enableUser(userDto));
     }
 
     @GetMapping("/{userId}")
