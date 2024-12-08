@@ -20,7 +20,7 @@ spring:
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
         spring.json.trusted.packages: '*'
-        spring.json.type.mapping: reservationStatusMessage:com.bitescout.app.notificationservice.kafka.reservation.ReservationStatusMessage,specialOfferMessage:com.bitescout.app.notificationservice.kafka.offer.SpecialOfferMessage
+        spring.json.type.mapping: reservationStatusMessage:com.bitescout.app.notificationservice.kafka.reservation.ReservationStatusMessage,specialOfferMessage:com.bitescout.app.notificationservice.kafka.offer.SpecialOfferMessage,incomingReservationMessage:com.bitescout.app.notificationservice.kafka.reservation.IncomingReservationMessage,reviewInteractionMessage:com.bitescout.app.notificationservice.kafka.review.ReviewInteractionMessage
   mail:
     host: smtp.gmail.com
     port: 1025
@@ -38,5 +38,6 @@ spring:
         writetimeout: 5000
 application:
   config:
+    reviews-url: http://localhost:8222/api/v1/reviews
     restaurants-url: http://localhost:8222/api/v1/restaurants
     users-url: http://localhost:8222/api/v1/users
