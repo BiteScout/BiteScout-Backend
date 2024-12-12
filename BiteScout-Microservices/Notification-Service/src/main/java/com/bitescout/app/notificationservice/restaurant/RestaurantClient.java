@@ -15,6 +15,6 @@ public interface RestaurantClient {
 
     //get restaurant information from restaurant service (restaurant name needed)
     @GetMapping("/{restaurant-id}")
-    Optional<RestaurantResponse> getRestaurant(@PathVariable("restaurant-id") Long restaurantId);
+    Optional<RestaurantResponse> getRestaurant(@PathVariable("restaurant-id") String restaurantId);
 
 }

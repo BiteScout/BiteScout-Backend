@@ -39,5 +39,5 @@ spring:
 application:
   config:
     reviews-url: http://localhost:8222/api/v1/reviews
-    restaurants-url: http://localhost:8222/api/v1/restaurants
-    users-url: http://localhost:8222/api/v1/users
+    restaurants-url: http://localhost:8060/api/v1/restaurants
+    users-url: http://localhost:8070/api/v1/users

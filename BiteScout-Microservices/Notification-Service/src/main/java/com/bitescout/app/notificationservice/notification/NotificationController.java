@@ -22,7 +22,7 @@ public class NotificationController {
     @PostMapping
     public ResponseEntity<NotificationResponse> createNotification(
             @RequestBody @Valid NotificationRequest request,
-            @RequestHeader(value = "User-Id") Long userId
+            @RequestHeader(value = "User-Id") String userId
     ){
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -32,7 +32,7 @@ public class NotificationController {
 
     @GetMapping
     public ResponseEntity<List<NotificationResponse>> getNotifications(
-            @RequestHeader(value = "User-Id") Long userId
+            @RequestHeader(value = "User-Id") String userId
     ){
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -42,7 +42,7 @@ public class NotificationController {
     @PutMapping("/{notification-id}")
     public ResponseEntity<NotificationResponse> markAsSeen(
             @PathVariable("notification-id") Long notificationId,
-            @RequestHeader(value = "User-Id") Long userId
+            @RequestHeader(value = "User-Id") String userId
     ) {
         return ResponseEntity.ok(service.markAsSeen(notificationId, userId));
     }
@@ -52,7 +52,7 @@ public class NotificationController {
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void deleteNotification(
             @PathVariable("notification-id") Long notificationId,
-            @RequestHeader(value = "User-Id") Long userId
+            @RequestHeader(value = "User-Id") String userId
     ){
         service.deleteNotification(notificationId, userId);
     }

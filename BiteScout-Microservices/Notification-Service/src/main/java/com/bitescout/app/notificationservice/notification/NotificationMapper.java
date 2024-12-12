@@ -7,9 +7,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class NotificationMapper {
 
-    public Notification toNotification(NotificationRequest request, Long userId){
+    public Notification toNotification(NotificationRequest request, String userId){
         return Notification.builder()
-                .userId(userId)
+                .userId(String.valueOf(userId))
                 .message(request.message())
                 .notificationType(request.notificationType())
                 .build();

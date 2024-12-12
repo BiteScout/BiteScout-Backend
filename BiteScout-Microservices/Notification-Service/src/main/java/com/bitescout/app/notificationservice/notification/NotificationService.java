@@ -17,13 +17,13 @@ public class NotificationService {
     private final NotificationRepository repository;
     private final NotificationMapper mapper;
 
-    public NotificationResponse createNotification(NotificationRequest request, Long userId) {
+    public NotificationResponse createNotification(NotificationRequest request, String userId) {
         var notification = mapper.toNotification(request, userId);
         repository.save(notification);
         return mapper.toNotificationResponse(notification);
     }
 
-    public List<NotificationResponse> getNotifications(Long userId) {
+    public List<NotificationResponse> getNotifications(String userId) {
         return repository.findByUserId(userId)
                 .stream()
                 .map(mapper::toNotificationResponse)
@@ -31,20 +31,20 @@ public class NotificationService {
                 .collect(Collectors.toList());
     }
 
-    public NotificationResponse markAsSeen(Long notificationId, Long userId){
+    public NotificationResponse markAsSeen(Long notificationId, String userId){
         var notification = repository.findByIdAndUserId(notificationId, userId)
                 .orElseThrow(()->new NotificationNotFoundException(String.format(
-                        "Notification with id %d for user id %d not found", notificationId, userId)
+                        "Notification with id %d for user id %s not found", notificationId, userId)
                 ));
         notification.setRead(true);
         repository.save(notification);
         return mapper.toNotificationResponse(notification);
     }
 
-    public void deleteNotification(Long notificationId, Long userId) {
+    public void deleteNotification(Long notificationId, String userId) {
         var notification = repository.findByIdAndUserId(notificationId, userId)
                 .orElseThrow(()->new NotificationNotFoundException(String.format(
-                        "Notification with id %d and user id %d not found", notificationId, userId
+                        "Notification with id %d and user id %s not found", notificationId, userId
                 )));
         repository.deleteById(notificationId);
     }

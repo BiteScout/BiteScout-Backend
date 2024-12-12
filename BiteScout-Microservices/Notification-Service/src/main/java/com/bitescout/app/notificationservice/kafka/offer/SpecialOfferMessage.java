@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 
 public record SpecialOfferMessage(
         Long id,
-        Long restaurantId,
+        String restaurantId,
         String title,
         String description,
         LocalDateTime startDate,

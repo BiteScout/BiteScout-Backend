@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class ReservationMapper {
 
-    public Reservation toReservation(ReservationRequest request, Long userId){
+    public Reservation toReservation(ReservationRequest request, String userId){
         return Reservation.builder()
                 .customerId(userId)
                 .restaurantId(request.restaurantId())

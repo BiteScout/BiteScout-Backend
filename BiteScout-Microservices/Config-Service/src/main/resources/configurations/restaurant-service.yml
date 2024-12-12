@@ -3,14 +3,13 @@ server:
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/restaurants
+    url: jdbc:postgresql://localhost:5433/restaurants
     username: user
     password: password
   jpa:
     hibernate:
       ddl-auto: update
     database: postgresql
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
   kafka:
     producer:
       bootstrap-servers: localhost:9092
@@ -33,7 +32,5 @@ spring:
 
 application:
   config:
-    reviews-url: http://localhost:8222/api/v1/reviews
-    reservations-url: http://localhost:8222/api/v1/reservations
-    promotions-url: http://localhost:8222/api/v1/promotions
+
 

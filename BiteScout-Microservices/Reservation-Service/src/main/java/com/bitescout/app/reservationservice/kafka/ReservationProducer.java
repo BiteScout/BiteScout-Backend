@@ -17,10 +17,20 @@ public class ReservationProducer {
     private final KafkaTemplate<String, ReservationStatusMessage> kafkaTemplate;
 
     public void sendReservationNotification(ReservationStatusMessage payload){
-        log.info("Sending reservation payload");
+        log.info("Sending reservation status payload");
         Message<ReservationStatusMessage> message = MessageBuilder
                 .withPayload(payload)
                 .setHeader(TOPIC, "reservation-status-topic")
+                .build();
+
+        kafkaTemplate.send(message);
+    }
+
+    public void sendIncomingReservationNotification(ReservationStatusMessage payload){
+        log.info("Sending incoming reservation payload");
+        Message<ReservationStatusMessage> message = MessageBuilder
+                .withPayload(payload)
+                .setHeader(TOPIC, "incoming-reservation-topic")
                 .build();
 
         kafkaTemplate.send(message);

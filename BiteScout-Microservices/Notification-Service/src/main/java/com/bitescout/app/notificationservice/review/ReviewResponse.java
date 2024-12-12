@@ -4,8 +4,8 @@ import java.time.LocalDateTime;
 
 public record ReviewResponse (
         Long id,
-        Long restaurantId,
-        Long customerId,
+        String restaurantId,
+        String customerId,
         Integer rating,
         String comment,
         LocalDateTime createdAt,

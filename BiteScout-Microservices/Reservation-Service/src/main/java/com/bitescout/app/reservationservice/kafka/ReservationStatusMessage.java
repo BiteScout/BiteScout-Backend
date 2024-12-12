@@ -6,8 +6,8 @@ import java.time.LocalDateTime;
 
 public record ReservationStatusMessage(
         Long id,
-        Long customerId,
-        Long restaurantId,
+        String customerId,
+        String restaurantId,
         LocalDateTime reservationTime,
         ReservationStatus reservationStatus,
         LocalDateTime createdAt,
