@@ -14,7 +14,17 @@ services:
     networks:
       - microservices-net
     restart: unless-stopped
-
+  postgis:
+    image: postgis/postgis:latest
+    container_name: postgis-container
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: gisdb
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgis-data:/var/lib/postgresql/data
   pgadmin:
     container_name: ms_pgadmin
     image: dpage/pgadmin4
@@ -103,3 +113,4 @@ volumes:
   postgres:
   pgadmin:
   mongo:
+  postgis-data:

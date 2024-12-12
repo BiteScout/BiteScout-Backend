@@ -21,13 +21,14 @@ public class ReservationService {
     private final ReservationProducer producer;
     private final ReservationMapper mapper;
 
-    public ReservationResponse createReservation(ReservationRequest request, Long userId) {
+    public ReservationResponse createReservation(ReservationRequest request, String userId) {
         var reservation = mapper.toReservation(request, userId);
         repository.save(reservation);
+        producer.sendIncomingReservationNotification(mapper.toReservationMessage(reservation));
         return mapper.toReservationResponse(reservation);
     }
 
-    public List<ReservationResponse> getAllReservationsForUser(Long userId) {
+    public List<ReservationResponse> getAllReservationsForUser(String userId) {
         return repository.findByCustomerId(userId)
                 .stream()
                 .map(mapper::toReservationResponse)
@@ -36,7 +37,7 @@ public class ReservationService {
     }
 
 
-    public List<ReservationResponse> getAllReservationsForRestaurant(Long restaurantId) {
+    public List<ReservationResponse> getAllReservationsForRestaurant(String restaurantId) {
         return repository.findByRestaurantId(restaurantId)
                 .stream()
                 .map(mapper::toReservationResponse)
@@ -44,9 +45,8 @@ public class ReservationService {
                 .collect(Collectors.toList());
     }
 
-    // can change acceptance or rejection for 5 minutes(time window to correct if it was a mistake),
+    // can implement: can change acceptance or rejection for 5 minutes(time window to correct if it was a mistake),
     // after that it becomes locked.
-
     public ReservationResponse acceptOrDenyReservation(Long id, ReservationStatusRequest request) {
         var reservation = repository.findById(id).orElseThrow(()->
                 new ReservationNotFoundException("This reservation was not found"));
@@ -68,9 +68,9 @@ public class ReservationService {
         return mapper.toReservationResponse(reservation);
     }
 
-    public void deleteReservation(Long reservationId, Long userId) {
+    public void deleteReservation(Long reservationId, String userId) {
         var reservation = repository.findByIdAndCustomerId(reservationId, userId).orElseThrow(()->
-                new ReservationNotFoundException(String.format("Reservation with id %d and user id %d not found",
+                new ReservationNotFoundException(String.format("Reservation with id %d and user id %s not found",
                         reservationId, userId)));
         repository.deleteById(reservationId);
     }

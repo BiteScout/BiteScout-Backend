@@ -18,8 +18,6 @@ import com.bitescout.app.notificationservice.user.UserResponse;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.common.protocol.types.Field;
-import org.aspectj.weaver.ast.Not;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
@@ -49,13 +47,13 @@ public class NotificationsConsumer {
         log.info(format("Consuming reservation status message from reservation-status-topic %s", message));
 
         String status = message.reservationStatus() == ReservationStatus.ACCEPTED ? "accepted" : "rejected";
-        String restaurantName = restaurantClient.getRestaurant(message.restaurantId()).get().name();
-        UserResponse userResponse = userClient.getUser(message.customerId()).get();
+        String restaurantName = restaurantClient.getRestaurant(String.valueOf(message.restaurantId())).get().name();
+        UserResponse userResponse = userClient.getUser(String.valueOf(message.customerId())).get();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm dd-MM");
         String formattedTime = message.reservationTime().format(formatter);
 
         repository.save(Notification.builder()
-                .userId(message.customerId())
+                .userId(String.valueOf(message.customerId()))
                 //Message subject to change
                 .message(format("Your reservation request with id %d to restaurant %s at time %s was %s",
                         message.id(), restaurantName, formattedTime, status))
@@ -64,7 +62,7 @@ public class NotificationsConsumer {
 
         emailService.sendReservationStatusEmail(
                 userResponse.email(),
-                userResponse.firstName() + " " + userResponse.lastName(),
+                userResponse.userDetails().firstName() + " " + userResponse.userDetails().lastName(),
                 restaurantName,
                 status,
                 formattedTime,
@@ -74,34 +72,34 @@ public class NotificationsConsumer {
 
     //notification goes to restaurant owner, when someone makes a reservation request
     @KafkaListener(topics = "incoming-reservation-topic")
-    public void consumerIncomingReservationTopic(IncomingReservationMessage message) throws MessagingException {
+    public void consumerIncomingReservationTopic(ReservationStatusMessage message) throws MessagingException {
         log.info(format("Consuming incoming reservation message from incoming-reservation-topic %s",message));
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm dd-MM");
         String formattedTime = message.createdAt().format(formatter);
 
-        RestaurantResponse response = restaurantClient.getRestaurant(message.restaurantId()).get();
+        RestaurantResponse response = restaurantClient.getRestaurant(String.valueOf(message.restaurantId())).get();
         String restaurantName = response.name();
-        UserResponse owner = userClient.getUser(response.ownerId()).get(); //this is restaurant owner
-        UserResponse customer = userClient.getUser(message.customerId()).get();
+        UserResponse owner = userClient.getUser(String.valueOf(response.ownerId())).get(); //this is restaurant owner
+        UserResponse customer = userClient.getUser(String.valueOf(message.customerId())).get();
 
         repository.save(Notification.builder()
-                .userId(response.ownerId())
+                .userId(String.valueOf(response.ownerId()))
                 //Message subject to change
                 .message(format("A reservation request with id %d to your restaurant %s was made by " +
                                 "%s for time %s",
                         message.id(),
                         restaurantName,
-                        customer.firstName() + " " + customer.lastName(),
+                        customer.userDetails().firstName() + " " + customer.userDetails().lastName(),
                         formattedTime))
                 .notificationType(NotificationType.INCOMING_RESERVATION_NOTIFICATION)
                 .build());
 
         emailService.sendIncomingReservationEmail(
                 owner.email(),
-                owner.firstName() + " " + owner.lastName(),
+                owner.userDetails().firstName() + " " + owner.userDetails().lastName(),
                 restaurantName,
-                customer.firstName() + " " + customer.lastName(),
+                customer.userDetails().firstName() + " " + customer.userDetails().lastName(),
                 formattedTime,
                 message.id()
         );
@@ -113,7 +111,7 @@ public class NotificationsConsumer {
         log.info("Consuming special offer message from special-offer-topic");
 
         RestaurantResponse restaurantResponse = restaurantClient.getRestaurant(message.restaurantId()).get();
-        List<UserResponse> users = userClient.getUsersByFavoritedRestaurant(message.restaurantId());
+        List<UserResponse> users = userClient.getUsersByFavoritedRestaurant(String.valueOf(message.restaurantId()));
 
         String restaurantName = restaurantResponse.name();
 
@@ -123,7 +121,7 @@ public class NotificationsConsumer {
 
         for(UserResponse user: users){
             repository.save(Notification.builder()
-                    .userId(user.id())
+                    .userId(String.valueOf(user.id()))
                     .message(String.format(
                             "One of your favorite restaurants, %s, has a special offer between" +
                                     " %s and %s.", restaurantName, startDate, endDate)
@@ -140,16 +138,16 @@ public class NotificationsConsumer {
         //x replied :
 
         ReviewResponse reviewResponse = reviewClient.getReview(message.reviewId()).get();
-        UserResponse reviewOwnerUser = userClient.getUser(reviewResponse.customerId()).get();
-        UserResponse interactingUser = userClient.getUser(message.userId()).get();
+        UserResponse reviewOwnerUser = userClient.getUser(String.valueOf(reviewResponse.customerId())).get();
+        UserResponse interactingUser = userClient.getUser(String.valueOf(message.userId())).get();
 
 
         repository.save(Notification.builder()
-                .userId(reviewOwnerUser.id())
+                .userId(String.valueOf(reviewOwnerUser.id()))
                 .message(String.format(
                         "%s %s has %s your comment: %s",
-                        interactingUser.firstName(),
-                        interactingUser.lastName(),
+                        interactingUser.userDetails().firstName(),
+                        interactingUser.userDetails().lastName(),
                         message.interactionType().getTemplatePhrase(),
                         message.replyText()             //reminder: this is very inefficient because it repeats
                 )).build());                            //information stored in reviews table. may need to

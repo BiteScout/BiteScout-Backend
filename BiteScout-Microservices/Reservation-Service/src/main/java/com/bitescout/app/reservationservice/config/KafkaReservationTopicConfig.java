@@ -14,4 +14,11 @@ public class KafkaReservationTopicConfig {
                 .name("reservation-status-topic")
                 .build();
     }
+
+    @Bean
+    public NewTopic incomingReservationTopic(){
+        return TopicBuilder
+                .name("incoming-reservation-topic")
+                .build();
+    }
 }

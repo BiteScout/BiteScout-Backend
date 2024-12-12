@@ -4,19 +4,19 @@ import org.apache.kafka.common.protocol.types.Field;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
-//might also copy from restaurant dto in restaurant service
 public record RestaurantResponse(
-        Long id,
-        Long ownerId,
+        String id,
+        String ownerId,
         String name,
         String description,
+        String menu,
         String cuisineType,
         String location,
         String priceRange,
         LocalDateTime createdAt,
-        LocalDateTime updatedAt,
-        List<Long> favoritedUserIds
+        LocalDateTime updatedAt
 
 ) {
 }

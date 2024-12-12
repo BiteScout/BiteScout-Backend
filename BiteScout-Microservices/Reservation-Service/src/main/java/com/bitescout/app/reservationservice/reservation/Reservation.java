@@ -21,8 +21,8 @@ public class Reservation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long customerId;
-    private Long restaurantId;
+    private String customerId;
+    private String restaurantId;
     private LocalDateTime reservationTime;
     @Enumerated(value = EnumType.STRING)
     private ReservationStatus reservationStatus;

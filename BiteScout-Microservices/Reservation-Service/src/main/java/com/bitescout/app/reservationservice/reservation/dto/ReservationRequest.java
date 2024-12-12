@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 public record ReservationRequest(
         @NotNull(message = "Restaurant id must be provided")
-        Long restaurantId,
+        String restaurantId,
         @NotNull(message = "Reservation time must be provided")
         @Future(message = "Reservation date must be in the future")
         LocalDateTime reservationTime

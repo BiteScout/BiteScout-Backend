@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
-    List<Reservation> findByCustomerId(Long customerId);
-    List<Reservation> findByRestaurantId(Long restaurantId);
-    Optional<Reservation> findByIdAndCustomerId(Long id, Long customerId);
+    List<Reservation> findByCustomerId(String customerId);
+    List<Reservation> findByRestaurantId(String restaurantId);
+    Optional<Reservation> findByIdAndCustomerId(Long id, String customerId);
 }
