@@ -54,8 +54,9 @@ public class RestaurantService {
         return modelMapper.map(restaurantRepository.save(restaurant), RestaurantResponseDTO.class);
     }
 
-    public List<RestaurantResponseDTO> getRestaurantsNearMe(double latitude, double longitude, double radius) {
-        return restaurantRepository.findByLocationNear(new Point(latitude, longitude), new Distance(radius, Metrics.KILOMETERS)).stream()
+    public List<RestaurantResponseDTO> getRestaurantsNearMe(double latitude, double longitude, double radiusInKm) {
+        double radiusInMeters = radiusInKm * 1000; //
+        return restaurantRepository.findByLocationNear(latitude, longitude, radiusInMeters).stream()
                 .map(restaurant -> modelMapper.map(restaurant, RestaurantResponseDTO.class))
                 .collect(Collectors.toList());
     }

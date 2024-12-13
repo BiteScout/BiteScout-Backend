@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.locationtech.jts.geom.Point;
 
 @Data
 @Builder
@@ -15,6 +16,6 @@ public class RestaurantRequestDTO {
     private String description;
     private String menu;
     private String cuisineType;
-    private String location;
+    private Point location;
     private String priceRange;
 }

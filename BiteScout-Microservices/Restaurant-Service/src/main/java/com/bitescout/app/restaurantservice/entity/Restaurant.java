@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.locationtech.jts.geom.Point;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -31,7 +32,8 @@ public class Restaurant {
 
     private String cuisineType;
 
-    private String location;
+    @Column(columnDefinition = "geography(Point,4326)", nullable = false)
+    private Point location;
 
     private String priceRange;
 
