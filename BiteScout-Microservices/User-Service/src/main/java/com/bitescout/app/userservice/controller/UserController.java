@@ -1,9 +1,6 @@
 package com.bitescout.app.userservice.controller;
 
-import com.bitescout.app.userservice.dto.FavoriteResponseDTO;
-import com.bitescout.app.userservice.dto.RegisterRequestDTO;
-import com.bitescout.app.userservice.dto.UserDTO;
-import com.bitescout.app.userservice.dto.UserUpdateRequestDTO;
+import com.bitescout.app.userservice.dto.*;
 import com.bitescout.app.userservice.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,12 +21,17 @@ public class UserController {
     // USER ENDPOINTS //
 
     @PostMapping("/save")
-    public ResponseEntity<UserDTO> createUser(@Valid @RequestBody RegisterRequestDTO RegisterRequest) {
+    public ResponseEntity<UserAuthDTO> createUser(@Valid @RequestBody RegisterRequestDTO RegisterRequest) {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(RegisterRequest));
     }
 
+    @GetMapping("/getUserByUsername/{username}")
+    public ResponseEntity<UserAuthDTO> getUserByUsername(@PathVariable String username) {
+        return ResponseEntity.ok(userService.getUserByUsername(username));
+    }
+
     @PutMapping("/enable-user")
-    public ResponseEntity<UserDTO> enableUser(@RequestBody UserDTO userDto) {
+    public ResponseEntity<Boolean> enableUser(@RequestBody UserDTO userDto) {
         return ResponseEntity.ok(userService.enableUser(userDto));
     }
 

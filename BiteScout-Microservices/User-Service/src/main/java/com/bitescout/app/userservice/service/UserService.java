@@ -24,7 +24,7 @@ public class UserService {
 
     // USER SERVICES //
 
-    public UserDTO createUser(RegisterRequestDTO request) {
+    public UserAuthDTO createUser(RegisterRequestDTO request) {
         User user = User.builder()
                 .username(request.getUsername())
                 .password(passwordEncoder.encode(request.getPassword()))
@@ -34,15 +34,20 @@ public class UserService {
                 .build();
 
         user = userRepository.save(user);
-        return modelMapper.map(user, UserDTO.class);
+        return modelMapper.map(user, UserAuthDTO.class);
 
     }
 
-    public UserDTO enableUser(UserDTO userDTO) {
+    public Boolean enableUser(UserDTO userDTO) {
         User user = userRepository.findById(userDTO.getId()).orElseThrow(() -> new RuntimeException("User not found"));
         user.setEnabled(true);
         user = userRepository.save(user);
-        return modelMapper.map(user, UserDTO.class);
+        return user.isEnabled();
+    }
+
+    public UserAuthDTO getUserByUsername(String username) {
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
+        return modelMapper.map(user, UserAuthDTO.class);
     }
 
     public UserDTO getUser(String userId) {
