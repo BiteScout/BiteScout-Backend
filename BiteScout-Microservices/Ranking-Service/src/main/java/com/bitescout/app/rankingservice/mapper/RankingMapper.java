@@ -8,14 +8,14 @@ import org.springframework.stereotype.Component;
 public class RankingMapper {
     public RankingResponse toRankingResponse(Ranking ranking) {
         return new RankingResponse(
-                ranking.getAverage_rating(),
+                ranking.getAverageRating(),
                 ranking.getTierRanking()
         );
     }
 
     public Ranking toRanking(RankingResponse rankingResponse) {
         return Ranking.builder()
-                .average_rating(rankingResponse.averageRating())
+                .averageRating(rankingResponse.averageRating())
                 .tierRanking(rankingResponse.tierRanking())
                 .build();
     }

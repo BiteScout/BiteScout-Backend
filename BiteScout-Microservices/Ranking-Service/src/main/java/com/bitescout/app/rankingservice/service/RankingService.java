@@ -24,7 +24,7 @@ public class RankingService {
         return rankingMapper.toRankingResponse(rankingRepository.findByRestaurantId(restaurantId));
     }
     public int getRestaurantTotalReviews(UUID restaurantId) {
-        return rankingRepository.findByRestaurantId(restaurantId).getTotal_reviews();
+        return rankingRepository.findByRestaurantId(restaurantId).getTotalReviews();
     }
 
     public double calculateAverageRating(UUID restaurantId) {
@@ -56,9 +56,9 @@ public class RankingService {
         TierRanking tierRanking = TierRanking.getTier(average_rating);
         return rankingRepository.save(Ranking.builder()
                 .restaurantId(restaurantId)
-                .average_rating(average_rating)
-                .total_reviews(total_reviews)
-                .popularity_score(popularity_score)
+                .averageRating(average_rating)
+                .totalReviews(total_reviews)
+                .popularityScore(popularity_score)
                 .tierRanking(tierRanking)
                 .build());
     }
@@ -69,9 +69,9 @@ public class RankingService {
         TierRanking tierRanking = TierRanking.getTier(average_rating);
 
         Ranking ranking = rankingRepository.findByRestaurantId(restaurantId);
-        ranking.setAverage_rating(average_rating);
-        ranking.setTotal_reviews(total_reviews);
-        ranking.setPopularity_score(popularity_score);
+        ranking.setAverageRating(average_rating);
+        ranking.setTotalReviews(total_reviews);
+        ranking.setPopularityScore(popularity_score);
         ranking.setTierRanking(tierRanking);
 
         return rankingRepository.save(ranking);
@@ -83,7 +83,7 @@ public class RankingService {
             throw new RuntimeException("No rankings found");
         }
         if (weeklyRanking.size() > 10) {
-            weeklyRanking.sort((r1, r2) -> Double.compare(r2.getPopularity_score(), r1.getPopularity_score()));
+            weeklyRanking.sort((r1, r2) -> Double.compare(r2.getPopularityScore(), r1.getPopularityScore()));
             weeklyRanking.subList(0, 10);
         }
         List<RankingResponse> weeklyRankingResponse = null;

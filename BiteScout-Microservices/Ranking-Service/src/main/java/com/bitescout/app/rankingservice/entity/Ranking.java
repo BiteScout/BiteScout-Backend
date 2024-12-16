@@ -24,13 +24,13 @@ public class Ranking {
     private UUID restaurantId;
 
     @Column
-    private double average_rating;
+    private double averageRating;
 
     @Column
-    private int total_reviews;
+    private int totalReviews;
 
     @Column
-    private double popularity_score;
+    private double popularityScore;
 
     @Enumerated(EnumType.STRING)
     private TierRanking tierRanking;

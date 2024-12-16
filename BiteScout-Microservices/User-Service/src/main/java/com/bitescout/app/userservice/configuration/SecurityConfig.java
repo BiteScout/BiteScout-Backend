@@ -25,7 +25,10 @@ public class SecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable)  // Disable form login (new approach)
                 .httpBasic(AbstractHttpConfigurer::disable)  // Disable HTTP Basic (new approach)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);  // Add JWT filter before UsernamePasswordAuthenticationFilter
-
+                // Eğer JWT Authentication Filter'ı UsernamePasswordAuthenticationFilter'dan önce eklemeseydik, JWT Authentication Filter'ı çalışmayacaktı.
+        // Auth-Servicedeki CustomAuthenticationProvider ile login işleminin nasıl gerçekleştiğini kontrol edebilirsiniz.
+        // Burda sadece JWT Authentication Filter'ı ekleyerek, JWT ile giriş yapmayı sağlamış olduk.
+        // Eğer Jwt hatalı ise
         return http.build();  // Final build step
     }
 }
