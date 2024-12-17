@@ -9,7 +9,5 @@ import java.util.UUID;
 @Repository
 public interface RankingRepository extends JpaRepository<Ranking, UUID> {
     Ranking findByRestaurantId(UUID restaurantId);
-    double getAverageRating(UUID restaurantId);
-
 }
 

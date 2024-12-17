@@ -37,8 +37,9 @@ public class RankingService {
         return rating;
     }
 
+
     public double calculatePopularityScore(UUID restaurantId) {
-        double rating = rankingRepository.getAverageRating(restaurantId);
+        double rating = rankingRepository.findByRestaurantId(restaurantId).getAverageRating();
         int total_reviews = reviewClient.getReviewsByRestaurant(restaurantId).getBody().size();
 
         return rating * Math.log1p(total_reviews);

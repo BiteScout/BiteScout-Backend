@@ -19,12 +19,12 @@ public class RankingController {
 
     private final RankingService rankingService;
     // Controller to get ratings by restaurant from review service and calculate ranking
-    @PostMapping
+    @PostMapping("/restaurant")
     public ResponseEntity<Ranking> submitRating(@RequestBody UUID restaurantId) {
         return ResponseEntity.ok(rankingService.submitRestaurantRating(restaurantId));
     }
     // Controller to post weekly notifications to cloud run
-    @PostMapping
+    @PostMapping("/notification/weekly")
     public ResponseEntity<List<RankingResponse>> notificationWeekly() {
         return ResponseEntity.ok(rankingService.getRatings());
     }
