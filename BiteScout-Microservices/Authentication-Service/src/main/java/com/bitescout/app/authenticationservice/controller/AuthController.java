@@ -4,18 +4,17 @@ import com.bitescout.app.authenticationservice.dto.TokenDto;
 import com.bitescout.app.authenticationservice.request.LoginRequest;
 import com.bitescout.app.authenticationservice.request.RegisterRequest;
 import com.bitescout.app.authenticationservice.service.AuthService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/v1/auth")
 public class AuthController {
     private final AuthService authService;
 
-    public AuthController(AuthService authService) {
-        this.authService = authService;
-    }
     @PostMapping("/login")
     public ResponseEntity<TokenDto> login(@RequestBody LoginRequest request) {
         return ResponseEntity.ok(authService.login(request));
