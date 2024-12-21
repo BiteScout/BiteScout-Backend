@@ -11,3 +11,8 @@ spring:
       ddl-auto: update
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+file:
+  storage:
+    service:
+      url: https://gcloud-storage-264767797819.us-central1.run.app/api/storage
