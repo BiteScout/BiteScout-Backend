@@ -85,4 +85,6 @@ public class UserController {
     public ResponseEntity<Long> countFavorites(@PathVariable String restaurantId) {
         return ResponseEntity.ok(userService.countFavorites(restaurantId));
     }
+
+
 }

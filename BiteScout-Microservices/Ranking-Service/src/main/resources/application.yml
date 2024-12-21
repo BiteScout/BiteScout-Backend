@@ -4,3 +4,7 @@ spring:
   cloud:
     config:
       import: optional:configserver:http://localhost:8888
+  ranking:
+    email:
+      service:
+        url: https://gcloud-storage-264767797819.us-central1.run.app/api/storage

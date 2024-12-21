@@ -1,16 +1,29 @@
 package com.bitescout.app.userservice.service;
-import com.bitescout.app.userservice.client.FileStorageClient;
-import com.bitescout.app.userservice.dto.*;
-import com.bitescout.app.userservice.entity.*;
-import com.bitescout.app.userservice.repository.*;
 
+import com.bitescout.app.userservice.dto.*;
+import com.bitescout.app.userservice.entity.Favorite;
+import com.bitescout.app.userservice.entity.User;
+import com.bitescout.app.userservice.entity.UserDetails;
+import com.bitescout.app.userservice.repository.FavoriteRepository;
+import com.bitescout.app.userservice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.*;
+import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -20,7 +33,10 @@ public class UserService {
     private final FavoriteRepository favoriteRepository;
     private final PasswordEncoder passwordEncoder;
     private final ModelMapper modelMapper;
-    private final FileStorageClient fileStorageClient;
+    private final RestTemplate restTemplate;
+
+    @Value("${file.storage.service.url}")
+    private String fileStorageServiceUrl;
 
     // USER SERVICES //
 
@@ -34,6 +50,8 @@ public class UserService {
                 .build();
 
         user = userRepository.save(user);
+        // every new user is added to the email list bucket cloud storage for weekly newsletter
+        saveToEmailList(user.getEmail());
         return modelMapper.map(user, UserAuthDTO.class);
 
     }
@@ -59,9 +77,9 @@ public class UserService {
         toUpdate = toUpdate == null ? new UserDetails() : toUpdate;
 
         if (file != null) {
-            String profilePicture = fileStorageClient.uploadImageToFIleSystem(file).getBody();
+            String profilePicture = uploadImageToFileSystem(file);
             if (profilePicture != null) {
-                fileStorageClient.deleteImageFromFileSystem(toUpdate.getProfilePicture());
+                deleteImageFromFileSystem(toUpdate.getProfilePicture());
                 toUpdate.setProfilePicture(profilePicture);
             }
         }
@@ -69,6 +87,7 @@ public class UserService {
         modelMapper.map(request, toUpdate);
         return toUpdate;
     }
+
     public UserDTO updateUser(UserUpdateRequestDTO request, MultipartFile profilePicture) {
         User user = userRepository.findById(UUID.fromString(request.getId())).orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -126,5 +145,38 @@ public class UserService {
                 .favoritedAt(favorite.getFavoritedAt().toString())
                 .build();
     }
+
+    private String uploadImageToFileSystem(MultipartFile file) {
+        if (file.isEmpty()) {
+            throw new RuntimeException("File is empty");
+        }
+
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+            Resource fileAsResource = new ByteArrayResource(file.getBytes()) {
+                @Override
+                public String getFilename() {
+                    return file.getOriginalFilename();
+                }
+            };
+
+            HttpEntity<Resource> requestEntity = new HttpEntity<>(fileAsResource, headers);
+            ResponseEntity<String> response = restTemplate.postForEntity(fileStorageServiceUrl + "/upload", requestEntity, String.class);
+
+            return response.getBody();
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to read file bytes", e);
+        }
+    }
+
+    private void deleteImageFromFileSystem(String filename) {
+        restTemplate.delete(fileStorageServiceUrl + "/delete/" + filename);
+    }
+    private void saveToEmailList(String email) {
+        HttpEntity<String> requestEntity = new HttpEntity<>(email);
+        restTemplate.postForEntity(fileStorageServiceUrl + "/emailList", requestEntity, Void.class);
+    }
+
 
 }
