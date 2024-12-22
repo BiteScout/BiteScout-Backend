@@ -6,7 +6,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@FeignClient(name = "user-service", path = "/v1/users")
+@FeignClient(name = "user-service", path = "api/v1/users")
 public interface UserServiceClient {
     @PostMapping("/save")
     ResponseEntity<UserDto> save(@RequestBody RegisterRequest request);

@@ -37,10 +37,10 @@ public class EmailService {
         messageHelper.setFrom("bite_scout@gmail.com");
 
         String templateName = "verification-email.html";
-
         Map<String, Object> variables = new HashMap<>();
         variables.put("token", token);
         variables.put("verificationUrl", authServiceUrl + "/v1/auth/verify?token=" + token);
+        variables.put("currentYear", String.valueOf(java.time.Year.now().getValue()));
 
         Context context = new Context();
         context.setVariables(variables);
