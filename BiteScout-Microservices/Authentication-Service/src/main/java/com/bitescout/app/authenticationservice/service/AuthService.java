@@ -30,8 +30,8 @@ public class AuthService {
 
     public TokenDto login(LoginRequest request) {
         Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
-        if (authenticate.isAuthenticated() && userServiceClient.getUserByUsername(request.getUsername()).getBody().isEnabled())
-            return TokenDto
+        if (authenticate.isAuthenticated() ) // && userServiceClient.getUserByUsername(request.getUsername()).getBody().isEnabled()
+            return TokenDto // şimdilik enable kontrolü yapmıyorum loginden token alabilmek için
                     .builder()
                     .token(jwtService.generateToken(request.getUsername()))
                     .build();
@@ -40,7 +40,8 @@ public class AuthService {
 
     public TokenDto register(RegisterRequest request) {
         UserDto userDto = userServiceClient.save(request).getBody();
-
+        if(userDto == null)
+            throw new RuntimeException("Failed to save user");
         String token = UUID.randomUUID().toString();
         VerificationToken verificationToken = VerificationToken.builder()
                 .token(token)

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Verification</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        .container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 20px;
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            color: #333;
+        }
+        .content {
+            font-size: 16px;
+            line-height: 1.5;
+            color: #555;
+        }
+        .button {
+            display: inline-block;
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 20px;
+        }
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: #aaa;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h2>Email Verification</h2>
+    </div>
+    <div class="content">
+        <p>Hi,</p>
+        <p>Thank you for registering with us. To complete your registration, please click the button below to verify your email address:</p>
+        <a href="${verificationUrl}" class="button">Verify Email</a>
+        <p>If you did not sign up for an account, please ignore this email.</p>
+        <p>Best regards,<br>Your App Team</p>
+    </div>
+    <div class="footer">
+        <p>&copy; ${currentYear} Your App. All rights reserved.</p>
+    </div>
+</div>
+</body>
+</html>
