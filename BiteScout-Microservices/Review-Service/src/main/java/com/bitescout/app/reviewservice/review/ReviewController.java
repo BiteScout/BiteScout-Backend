@@ -28,7 +28,7 @@ public class ReviewController {
         return ResponseEntity.status(HttpStatus.CREATED).body(reviewService.createReview(reviewRequest, userId));
     }
 
-    @PostMapping
+    @PostMapping("/interaction")
     public ResponseEntity<ReviewInteraction> createReviewInteraction(
             @RequestBody @Valid ReviewInteractionRequest request
     ){
