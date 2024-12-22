@@ -42,7 +42,7 @@ public class UserController {
 
     @PutMapping("/update")
     @PreAuthorize("hasRole('ADMIN') or @userService.getUser(#request.id).username == principal")
-    public ResponseEntity<UserDTO> updateUser(@Valid @RequestPart UserUpdateRequestDTO request,
+    public ResponseEntity<UserDTO> updateUser(@Valid @RequestBody UserUpdateRequestDTO request,
                                               @RequestPart(required = false) MultipartFile profilePicture) {
         return ResponseEntity.ok(userService.updateUser(request, profilePicture));
     }

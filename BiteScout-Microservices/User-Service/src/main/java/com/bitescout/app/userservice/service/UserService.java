@@ -73,7 +73,7 @@ public class UserService {
         return modelMapper.map(user, UserDTO.class);
     }
 
-    private UserDetails updateUserDetails(UserDetails toUpdate, UserDetails request, MultipartFile file) {
+    private UserDetails updateUserDetails(UserDetails toUpdate, UserUpdateRequestDTO request, MultipartFile file) {
         toUpdate = toUpdate == null ? new UserDetails() : toUpdate;
 
         if (file != null) {
@@ -84,18 +84,39 @@ public class UserService {
             }
         }
 
-        modelMapper.map(request, toUpdate);
+        // Set fields from the updated request
+        toUpdate.setFirstName(request.getFirstName());
+        toUpdate.setLastName(request.getLastName());
+        toUpdate.setPhoneNumber(request.getPhoneNumber());
+        toUpdate.setCountry(request.getCountry());
+        toUpdate.setCity(request.getCity());
+        toUpdate.setPostalCode(request.getPostalCode());
+        toUpdate.setAddress(request.getAddress());
+
         return toUpdate;
     }
 
-    public UserDTO updateUser(UserUpdateRequestDTO request, MultipartFile profilePicture) {
-        User user = userRepository.findById(UUID.fromString(request.getId())).orElseThrow(() -> new RuntimeException("User not found"));
 
-        request.setUserDetails(updateUserDetails(user.getUserDetails(), request.getUserDetails(), profilePicture));
-        modelMapper.map(request, user);
+    public UserDTO updateUser(UserUpdateRequestDTO request, MultipartFile profilePicture) {
+        User user = userRepository.findById(UUID.fromString(request.getId()))
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Update UserDetails
+        user.setUserDetails(updateUserDetails(user.getUserDetails(), request, profilePicture));
+
+        // Map other fields from the request to the User entity
+        if (request.getUsername() != null) {
+            user.setUsername(request.getUsername());
+        }
+        if (request.getPassword() != null) {
+            user.setPassword(request.getPassword());
+        }
+
+        // Save updated user and map to DTO
         user = userRepository.save(user);
         return modelMapper.map(user, UserDTO.class);
     }
+
 
     public void deleteUser(String userId) {
         User user = userRepository.findById(UUID.fromString(userId)).orElseThrow(() -> new RuntimeException("User not found"));
