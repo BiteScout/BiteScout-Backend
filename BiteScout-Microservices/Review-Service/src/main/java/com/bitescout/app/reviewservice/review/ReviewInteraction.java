@@ -1,5 +1,6 @@
 package com.bitescout.app.reviewservice.review;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
@@ -16,9 +17,10 @@ import java.time.LocalDateTime;
 @Document(collection = "reviewInteraction")
 public class ReviewInteraction {
     @Id
-    private Long id;
-    private Long reviewId;
-    private Long userId;
+    private String id;
+    private String reviewId;
+    @NotNull
+    private String userId;
     private InteractionType interactionType;
     private String replyText;
     @CreatedDate

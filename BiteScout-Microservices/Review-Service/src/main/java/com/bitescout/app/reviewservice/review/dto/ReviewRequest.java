@@ -1,7 +1,7 @@
 package com.bitescout.app.reviewservice.review.dto;
 
 public record ReviewRequest (
-    Long restaurantId,
+    String restaurantId,
     Integer rating,
     String comment
 ){

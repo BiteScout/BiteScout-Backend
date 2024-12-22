@@ -19,26 +19,27 @@ public class ReviewService {
     private final ReviewRepository repository;
     private final ReviewMapper mapper;
 
-    public ReviewResponse createReview(ReviewRequest reviewRequest, Long userId) {
+    public ReviewResponse createReview(ReviewRequest reviewRequest, String userId) {
         var review = mapper.toReview(reviewRequest, userId);
         repository.save(review);
         return mapper.toReviewResponse(review);
     }
 
-    public List<ReviewResponse> getReviews(Long restaurantId) {
+    public List<ReviewResponse> getReviews(String restaurantId) {
         return repository.findByRestaurantId(restaurantId)
                 .stream()
                 .map(mapper::toReviewResponse)
+                .filter(review -> review.createdAt() != null) // Filter out reviews with null createdAt
                 .sorted(Comparator.comparing(ReviewResponse::createdAt).reversed())
                 .collect(Collectors.toList());
     }
 
-    public ReviewResponse getReview(Long reviewId) {
+    public ReviewResponse getReview(String reviewId) {
         var review = repository.findById(reviewId).get();
         return mapper.toReviewResponse(review);
     }
 
-    public ReviewResponse updateReview(ReviewRequest reviewRequest, Long reviewId){
+    public ReviewResponse updateReview(ReviewRequest reviewRequest, String reviewId){
         var existingReview = repository.findById(reviewId).get();
         existingReview.setComment(reviewRequest.comment());
         existingReview.setRating(reviewRequest.rating());
@@ -47,7 +48,12 @@ public class ReviewService {
         return mapper.toReviewResponse(existingReview);
     }
 
-    public void deleteReview(Long reviewId){
+    public String getReviewOwner(String reviewId){
+        Review review = repository.findById(reviewId).orElseThrow(() -> new BadRequestException("review not found"));
+        return review.getCustomerId();
+    }
+
+    public void deleteReview(String reviewId){
         repository.deleteById(reviewId);
     }
 
@@ -58,7 +64,7 @@ public class ReviewService {
         var interaction = ReviewInteraction.builder()
                 .interactionType(request.interactionType())
                 .reviewId(request.reviewId())
-                .userId(Long.valueOf(request.userId()))
+                .userId((request.userId()))
                 .replyText(request.replyText())
                 .build();
         interactionRepository.save(interaction);

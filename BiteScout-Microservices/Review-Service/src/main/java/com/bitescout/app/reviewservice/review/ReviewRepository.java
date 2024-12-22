@@ -6,7 +6,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;
 
-public interface ReviewRepository extends MongoRepository<Review,Long>/*JpaRepository<Review, Long>*/{
+public interface ReviewRepository extends MongoRepository<Review,String>/*JpaRepository<Review, Long>*/{
 
-    public List<Review> findByRestaurantId(Long restaurantID);
+    public List<Review> findByRestaurantId(String restaurantID);
 }

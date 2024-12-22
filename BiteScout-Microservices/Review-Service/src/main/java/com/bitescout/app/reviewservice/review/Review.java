@@ -17,9 +17,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class Review {
     @Id
-    private Long id;
-    private Long restaurantId;
-    private Long customerId;
+    private String id;
+    private String restaurantId;
+    private String customerId;
     private int rating;
     private String comment;
     @CreatedDate
