@@ -123,6 +123,11 @@ public class UserService {
         userRepository.delete(user);
     }
 
+    public void deleteUserByUsername(String username) {
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
+        userRepository.delete(user);
+    }
+
     public List<UserDTO> getAllUsers() {
         List<User> users = userRepository.findAll();
         return users.stream().map(user -> modelMapper.map(user, UserDTO.class)).collect(Collectors.toList());

@@ -60,6 +60,12 @@ public class UserController {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
+    @DeleteMapping("/username/{username}")
+    @PreAuthorize("hasRole('ADMIN') or @userService.getUserByUsername(#username).username == principal")
+    public ResponseEntity<Void> deleteUserByUsername(@PathVariable String username) {
+        userService.deleteUserByUsername(username);
+        return ResponseEntity.ok().build();
+    }
 
     // FAVORITES ENDPOINTS //
 
