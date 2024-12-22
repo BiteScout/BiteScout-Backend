@@ -20,7 +20,7 @@ public class RankingController {
     private final RankingService rankingService;
     // Controller to get ratings by restaurant from review service and calculate ranking
     @PostMapping("/restaurant")
-    public ResponseEntity<Ranking> submitRating(@RequestBody UUID restaurantId) {
+    public ResponseEntity<Ranking> submitRating(@RequestParam String restaurantId) {
         return ResponseEntity.ok(rankingService.submitRestaurantRating(restaurantId));
     }
     // Controller to post notifications to cloud run
@@ -31,12 +31,12 @@ public class RankingController {
 
     // RankingResponse object with average rating, total reviews and popularity score
     @GetMapping("/restaurant/{restaurantId}")
-    public ResponseEntity<RankingResponse> getRatingsByRestaurant(@PathVariable UUID restaurantId) {
+    public ResponseEntity<RankingResponse> getRatingsByRestaurant(@PathVariable String restaurantId) {
         return ResponseEntity.ok(rankingService.getRestaurantRating(restaurantId));
     }
     // Json object with average rating and total reviews
     @GetMapping("/restaurant/{restaurantId}/average")
-    public ResponseEntity<Map<String, Object>> getAverageRating(@PathVariable UUID restaurantId) {
+    public ResponseEntity<Map<String, Object>> getAverageRating(@PathVariable String restaurantId) {
         double averageRating = rankingService.calculateAverageRating(restaurantId);
         int totalReviews = rankingService.getRestaurantTotalReviews(restaurantId);
         Map<String, Object> response = new HashMap<>();
