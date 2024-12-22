@@ -28,16 +28,16 @@ public class RankingService {
 
     @Value("${spring.ranking.email.service.url}")
     private String rankingEmailServiceUrl;
-    public RankingResponse getRestaurantRating(UUID restaurantId) {
-        return rankingMapper.toRankingResponse(rankingRepository.findByRestaurantId(restaurantId));
+    public RankingResponse getRestaurantRating(String restaurantId) {
+        return rankingMapper.toRankingResponse(rankingRepository.findByRestaurantId(UUID.fromString(restaurantId)));
     }
-    public int getRestaurantTotalReviews(UUID restaurantId) {
-        return rankingRepository.findByRestaurantId(restaurantId).getTotalReviews();
+    public int getRestaurantTotalReviews(String restaurantId) {
+        return rankingRepository.findByRestaurantId(UUID.fromString(restaurantId)).getTotalReviews();
     }
 
-    public double calculateAverageRating(UUID restaurantId) {
+    public double calculateAverageRating(String restaurantId) {
 
-        double rating = reviewClient.getReviewsByRestaurant(restaurantId).getBody().stream()
+        double rating = reviewClient.getReviewsByRestaurant(UUID.fromString(restaurantId)).getBody().stream()
                 .mapToInt(ReviewDto::rating)
                 .average()
                 .orElse(0.0);
@@ -51,32 +51,32 @@ public class RankingService {
 
         return rating * Math.log1p(total_reviews);
     }
-    public Ranking submitRestaurantRating(UUID restaurantId) {
-       if(rankingRepository.findByRestaurantId(restaurantId) == null) {
+    public Ranking submitRestaurantRating(String restaurantId) {
+       if(rankingRepository.findByRestaurantId(UUID.fromString(restaurantId)) == null) {
            return submitNewRestaurantRating(restaurantId);
        }
          return updateRestaurantRating(restaurantId);
     }
-    public Ranking submitNewRestaurantRating(UUID restaurantId) {
+    public Ranking submitNewRestaurantRating(String restaurantId) {
         double average_rating = calculateAverageRating(restaurantId);
-        int total_reviews = reviewClient.getReviewsByRestaurant(restaurantId).getBody().size();
-        double popularity_score = calculatePopularityScore(restaurantId);
+        int total_reviews = reviewClient.getReviewsByRestaurant(UUID.fromString(restaurantId)).getBody().size();
+        double popularity_score = calculatePopularityScore(UUID.fromString(restaurantId));
         TierRanking tierRanking = TierRanking.getTier(average_rating);
         return rankingRepository.save(Ranking.builder()
-                .restaurantId(restaurantId)
+                .restaurantId(UUID.fromString(restaurantId))
                 .averageRating(average_rating)
                 .totalReviews(total_reviews)
                 .popularityScore(popularity_score)
                 .tierRanking(tierRanking)
                 .build());
     }
-    public Ranking updateRestaurantRating(UUID restaurantId) {
+    public Ranking updateRestaurantRating(String restaurantId) {
         double average_rating = calculateAverageRating(restaurantId);
-        int total_reviews = reviewClient.getReviewsByRestaurant(restaurantId).getBody().size();
-        double popularity_score = calculatePopularityScore(restaurantId);
+        int total_reviews = reviewClient.getReviewsByRestaurant(UUID.fromString(restaurantId)).getBody().size();
+        double popularity_score = calculatePopularityScore(UUID.fromString(restaurantId));
         TierRanking tierRanking = TierRanking.getTier(average_rating);
 
-        Ranking ranking = rankingRepository.findByRestaurantId(restaurantId);
+        Ranking ranking = rankingRepository.findByRestaurantId(UUID.fromString(restaurantId));
         ranking.setAverageRating(average_rating);
         ranking.setTotalReviews(total_reviews);
         ranking.setPopularityScore(popularity_score);
