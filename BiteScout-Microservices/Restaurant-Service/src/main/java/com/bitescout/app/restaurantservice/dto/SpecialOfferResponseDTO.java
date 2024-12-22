@@ -7,13 +7,14 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class SpecialOfferResponseDTO {
-    private String id;
+    private UUID id;
     private String title;
     private String description;
     private LocalDate startDate;

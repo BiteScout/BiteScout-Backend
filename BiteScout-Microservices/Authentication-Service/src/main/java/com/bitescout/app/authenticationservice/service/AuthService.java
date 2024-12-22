@@ -67,6 +67,6 @@ public class AuthService {
         UserDto user = userServiceClient.getUserByUsername(verificationToken.getUsername()).getBody();
         assert user != null;
         user.setEnabled(true);
-        userServiceClient.update(user);
+        userServiceClient.update(user.getId());
     }
 }
