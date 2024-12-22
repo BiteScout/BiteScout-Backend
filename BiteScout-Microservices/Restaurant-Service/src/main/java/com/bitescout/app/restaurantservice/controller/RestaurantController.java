@@ -35,7 +35,7 @@ public class RestaurantController {
         return ResponseEntity.ok(restaurantService.getRestaurant(restaurantId));
     }
 
-    @GetMapping("/{ownerId}")
+    @GetMapping("/owner/{ownerId}")
     public ResponseEntity<List<RestaurantResponseDTO>> getRestaurantsByOwnerId(@PathVariable String ownerId) {
         return ResponseEntity.ok(restaurantService.getRestaurantsByOwnerId(ownerId));
     }

@@ -50,7 +50,14 @@ public class RestaurantService {
         Restaurant restaurant = restaurantRepository.findById(UUID.fromString(restaurantId))
                 .orElseThrow(() -> new ResourceNotFoundException("Restaurant not found"));
 
-        modelMapper.map (restaurantRequest, restaurant);
+        restaurant.setOwnerId(restaurantRequest.getOwnerId());
+        restaurant.setName(restaurantRequest.getName());
+        restaurant.setDescription(restaurantRequest.getDescription());
+        restaurant.setMenu(restaurantRequest.getMenu());
+        restaurant.setCuisineType(restaurantRequest.getCuisineType());
+        restaurant.setLocation(restaurantRequest.getLocation());
+        restaurant.setPriceRange(restaurantRequest.getPriceRange());
+
         return modelMapper.map(restaurantRepository.save(restaurant), RestaurantResponseDTO.class);
     }
 

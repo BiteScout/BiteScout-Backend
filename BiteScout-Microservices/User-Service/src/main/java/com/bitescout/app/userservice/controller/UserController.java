@@ -30,9 +30,9 @@ public class UserController {
         return ResponseEntity.ok(userService.getUserByUsername(username));
     }
 
-    @PutMapping("/enable-user")
-    public ResponseEntity<Boolean> enableUser(@RequestBody UserDTO userDto) {
-        return ResponseEntity.ok(userService.enableUser(userDto));
+    @PutMapping("/enable-user/{userId}")
+    public ResponseEntity<Boolean> enableUser(@PathVariable String userId) {
+        return ResponseEntity.ok(userService.enableUser(userId));
     }
 
     @GetMapping("/{userId}")

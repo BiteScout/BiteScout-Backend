@@ -56,8 +56,8 @@ public class UserService {
 
     }
 
-    public Boolean enableUser(UserDTO userDTO) {
-        User user = userRepository.findById(userDTO.getId()).orElseThrow(() -> new RuntimeException("User not found"));
+    public Boolean enableUser(String userId) {
+        User user = userRepository.findById(UUID.fromString(userId)).orElseThrow(() -> new RuntimeException("User not found"));
         user.setEnabled(true);
         user = userRepository.save(user);
         return user.isEnabled();
