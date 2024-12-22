@@ -1,7 +1,9 @@
 package com.bitescout.app.reviewservice.review;
 
+import com.bitescout.app.reviewservice.review.dto.ReviewInteractionRequest;
 import com.bitescout.app.reviewservice.review.dto.ReviewRequest;
 import com.bitescout.app.reviewservice.review.dto.ReviewResponse;
+import jakarta.ws.rs.BadRequestException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +15,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ReviewService {
 
+    private final ReviewInteractionRepository interactionRepository;
     private final ReviewRepository repository;
     private final ReviewMapper mapper;
 
@@ -46,5 +49,19 @@ public class ReviewService {
 
     public void deleteReview(Long reviewId){
         repository.deleteById(reviewId);
+    }
+
+    public ReviewInteraction createReviewInteraction(ReviewInteractionRequest request) {
+        if(repository.findById(request.reviewId()).isEmpty()){
+            throw new BadRequestException("review not found");
+        }
+        var interaction = ReviewInteraction.builder()
+                .interactionType(request.interactionType())
+                .reviewId(request.reviewId())
+                .userId(Long.valueOf(request.userId()))
+                .replyText(request.replyText())
+                .build();
+        interactionRepository.save(interaction);
+        return interaction;
     }
 }

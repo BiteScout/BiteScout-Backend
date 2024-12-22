@@ -26,7 +26,7 @@ public class RankingService {
     private final RestTemplate restTemplate;
     private final RestaurantClient restaurantClient;
 
-    @Value("${ranking.email.service.url}")
+    @Value("${spring.ranking.email.service.url}")
     private String rankingEmailServiceUrl;
     public RankingResponse getRestaurantRating(UUID restaurantId) {
         return rankingMapper.toRankingResponse(rankingRepository.findByRestaurantId(restaurantId));
