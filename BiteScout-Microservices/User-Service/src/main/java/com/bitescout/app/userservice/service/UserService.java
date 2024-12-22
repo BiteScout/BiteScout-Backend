@@ -35,7 +35,7 @@ public class UserService {
     private final ModelMapper modelMapper;
     private final RestTemplate restTemplate;
 
-    @Value("${file.storage.service.url}")
+    @Value("${spring.file.storage.service.url}")
     private String fileStorageServiceUrl;
 
     // USER SERVICES //

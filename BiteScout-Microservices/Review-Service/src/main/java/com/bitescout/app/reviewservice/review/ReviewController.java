@@ -1,5 +1,6 @@
 package com.bitescout.app.reviewservice.review;
 
+import com.bitescout.app.reviewservice.review.dto.ReviewInteractionRequest;
 import com.bitescout.app.reviewservice.review.dto.ReviewRequest;
 import com.bitescout.app.reviewservice.review.dto.ReviewResponse;
 import jakarta.validation.Valid;
@@ -25,6 +26,15 @@ public class ReviewController {
             @RequestHeader("User-Id") Long userId
     ) {
         return ResponseEntity.status(HttpStatus.CREATED).body(reviewService.createReview(reviewRequest, userId));
+    }
+
+    @PostMapping
+    public ResponseEntity<ReviewInteraction> createReviewInteraction(
+            @RequestBody @Valid ReviewInteractionRequest request
+    ){
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(reviewService.createReviewInteraction(request));
     }
 
     //Get all reviews
@@ -60,4 +70,6 @@ public class ReviewController {
     ){
         reviewService.deleteReview(reviewId);
     }
+
+
 }
