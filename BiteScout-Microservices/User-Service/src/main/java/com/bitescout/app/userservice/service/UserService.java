@@ -117,7 +117,10 @@ public class UserService {
         return modelMapper.map(user, UserDTO.class);
     }
 
-
+    public UserDTO getUsername(UUID userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        return modelMapper.map(user, UserDTO.class);
+    }
     public void deleteUser(String userId) {
         User user = userRepository.findById(UUID.fromString(userId)).orElseThrow(() -> new RuntimeException("User not found"));
         userRepository.delete(user);

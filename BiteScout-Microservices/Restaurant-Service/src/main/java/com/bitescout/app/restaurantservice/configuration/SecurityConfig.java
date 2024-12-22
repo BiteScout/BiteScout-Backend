@@ -1,6 +1,7 @@
-package com.bitescout.app.userservice.configuration;
+package com.bitescout.app.restaurantservice.configuration;
 
-import com.bitescout.app.userservice.jwt.JwtAuthenticationFilter;
+
+import com.bitescout.app.restaurantservice.jwt.JwtAuthenticationFilter;
 import jakarta.ws.rs.HttpMethod;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -37,3 +38,4 @@ public class SecurityConfig {
         return http.build();  // Final build step
     }
 }
+

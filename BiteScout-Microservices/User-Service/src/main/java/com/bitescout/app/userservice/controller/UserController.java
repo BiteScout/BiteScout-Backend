@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,7 +25,10 @@ public class UserController {
     public ResponseEntity<UserAuthDTO> createUser(@Valid @RequestBody RegisterRequestDTO RegisterRequest) {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(RegisterRequest));
     }
-
+    @GetMapping("/getUsername/{userId}")
+    public ResponseEntity<UserDTO> getUsername(@PathVariable UUID userId) {
+        return ResponseEntity.ok(userService.getUsername(userId));
+    }
     @GetMapping("/getUserByUsername/{username}")
     public ResponseEntity<UserAuthDTO> getUserByUsername(@PathVariable String username) {
         return ResponseEntity.ok(userService.getUserByUsername(username));

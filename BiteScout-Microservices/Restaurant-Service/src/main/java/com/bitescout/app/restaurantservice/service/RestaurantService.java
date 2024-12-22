@@ -1,11 +1,11 @@
 package com.bitescout.app.restaurantservice.service;
 
 import com.bitescout.app.restaurantservice.dto.*;
+import com.bitescout.app.restaurantservice.exc.ResourceNotFoundException;
 import com.bitescout.app.restaurantservice.repository.*;
 import com.bitescout.app.restaurantservice.entity.*;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.kafka.common.errors.ResourceNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.geo.Distance;
 import org.springframework.data.geo.Metrics;
@@ -36,9 +36,12 @@ public class RestaurantService {
     }
 
     public RestaurantResponseDTO getRestaurant(String restaurantId) {
-        return modelMapper.map(restaurantRepository.findById(UUID.fromString(restaurantId))
-                .orElseThrow(() -> new ResourceNotFoundException("Restaurant not found")), RestaurantResponseDTO.class);
+        System.out.println("Fetching restaurant with ID: " + restaurantId);
+        return restaurantRepository.findById(UUID.fromString(restaurantId))
+                .map(restaurant -> modelMapper.map(restaurant, RestaurantResponseDTO.class))
+                .orElseThrow(() -> new ResourceNotFoundException("Restaurant not found with ID: " + restaurantId));
     }
+
 
     public List<RestaurantResponseDTO> getRestaurantsByOwnerId(String ownerId) {
         return restaurantRepository.findByOwnerId(UUID.fromString(ownerId)).stream()
