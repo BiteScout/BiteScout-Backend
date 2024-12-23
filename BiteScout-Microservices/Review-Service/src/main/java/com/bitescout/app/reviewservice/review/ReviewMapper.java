@@ -12,7 +12,7 @@ public class ReviewMapper {
                 review.getCreatedAt(), review.getUpdatedAt());
     }
 
-    public Review toReview(ReviewRequest reviewRequest, Long userId){
+    public Review toReview(ReviewRequest reviewRequest, String userId){
         return Review.builder().customerId(userId)
                 .restaurantId(reviewRequest.restaurantId())
                 .rating(reviewRequest.rating())

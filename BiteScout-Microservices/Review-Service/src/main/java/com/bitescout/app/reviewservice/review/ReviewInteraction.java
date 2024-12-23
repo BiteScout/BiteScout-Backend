@@ -16,9 +16,9 @@ import java.time.LocalDateTime;
 @Document(collection = "reviewInteraction")
 public class ReviewInteraction {
     @Id
-    private Long id;
-    private Long reviewId;
-    private Long userId;
+    private String id;
+    private String reviewId;
+    private String interactingUserId;
     private InteractionType interactionType;
     private String replyText;
     @CreatedDate

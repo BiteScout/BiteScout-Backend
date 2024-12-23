@@ -23,23 +23,24 @@ public class ReviewController {
     @PostMapping
     public ResponseEntity<ReviewResponse> createReview(
             @RequestBody @Valid ReviewRequest reviewRequest,
-            @RequestHeader("User-Id") Long userId
+            @RequestHeader("User-Id") String userId
     ) {
         return ResponseEntity.status(HttpStatus.CREATED).body(reviewService.createReview(reviewRequest, userId));
     }
 
     @PostMapping("/interaction")
     public ResponseEntity<ReviewInteraction> createReviewInteraction(
-            @RequestBody @Valid ReviewInteractionRequest request
+            @RequestBody @Valid ReviewInteractionRequest request,
+            @RequestHeader("User-Id") String userId
     ){
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(reviewService.createReviewInteraction(request));
+                .body(reviewService.createReviewInteraction(request, userId));
     }
 
     //Get all reviews
     @GetMapping("/restaurants/{restaurant-id}")
-    public ResponseEntity<List<ReviewResponse>> getReviews(@PathVariable(value = "restaurant-id") Long restaurantId) {
+    public ResponseEntity<List<ReviewResponse>> getReviews(@PathVariable(value = "restaurant-id") String restaurantId) {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(reviewService.getReviews(restaurantId));
@@ -47,7 +48,7 @@ public class ReviewController {
 
     @GetMapping("/{reviewId}")
     public ResponseEntity<ReviewResponse> getReview(
-            @PathVariable("reviewId") Long reviewId
+            @PathVariable("reviewId") String reviewId
     ) {
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -57,7 +58,7 @@ public class ReviewController {
     @PutMapping("/{reviewId}")
     public ResponseEntity<ReviewResponse> updateReview(
             @RequestBody ReviewRequest reviewRequest,
-            @PathVariable("reviewId") Long reviewId
+            @PathVariable("reviewId") String reviewId
     ){
         return ResponseEntity.status(HttpStatus.OK).body(reviewService.updateReview(reviewRequest,reviewId));
 
@@ -66,7 +67,7 @@ public class ReviewController {
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @DeleteMapping("/{reviewId}")
     public void deleteReview(
-            @PathVariable("reviewId") Long reviewId
+            @PathVariable("reviewId") String reviewId
     ){
         reviewService.deleteReview(reviewId);
     }
