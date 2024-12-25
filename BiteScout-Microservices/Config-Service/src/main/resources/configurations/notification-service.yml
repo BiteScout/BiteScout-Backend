@@ -23,19 +23,22 @@ spring:
         spring.json.type.mapping: reservationStatusMessage:com.bitescout.app.notificationservice.kafka.reservation.ReservationStatusMessage,specialOfferMessage:com.bitescout.app.notificationservice.kafka.offer.SpecialOfferMessage,incomingReservationMessage:com.bitescout.app.notificationservice.kafka.reservation.IncomingReservationMessage,reviewInteractionMessage:com.bitescout.app.notificationservice.kafka.review.ReviewInteractionMessage
   mail:
     host: smtp.gmail.com
-    port: 1025
+    port: 587
     username: infobitescout@gmail.com
-    password: m1KvyJZBwhC119W
+    password: "jambinmulgnwaoxf"
     properties:
       mail:
         smtp:
-          trust: "*"
-        auth: true
-        starttls:
-          enabled: true
-        connectiontimeout: 5000
-        timeout: 3000
-        writetimeout: 5000
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          ssl.trust: smtp.gmail.com
+          connectiontimeout: 5000
+          timeout: 3000
+          writetimeout: 5000
+        debug: true
+
 application:
   config:
     reviews-url: http://localhost:8222/v1/reviews
