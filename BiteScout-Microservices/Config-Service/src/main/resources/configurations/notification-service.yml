@@ -38,6 +38,6 @@ spring:
         writetimeout: 5000
 application:
   config:
-    reviews-url: http://localhost:8222/api/v1/reviews
-    restaurants-url: http://localhost:8222/api/v1/restaurants
-    users-url: http://localhost:8222/api/v1/users
+    reviews-url: http://localhost:8222/v1/reviews
+    restaurants-url: http://localhost:8222/v1/restaurants
+    users-url: http://localhost:8222/v1/users

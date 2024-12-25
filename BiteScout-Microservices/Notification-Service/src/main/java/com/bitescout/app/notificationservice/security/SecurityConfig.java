@@ -24,7 +24,7 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable) // Disable CSRF protection
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST, "/api/v1/reviews").authenticated()
+                        .requestMatchers("/v1/notifications").authenticated()
                         .anyRequest().permitAll())
                 .formLogin(AbstractHttpConfigurer::disable)  // Disable form login (new approach)
                 .httpBasic(AbstractHttpConfigurer::disable)  // Disable HTTP Basic (new approach)

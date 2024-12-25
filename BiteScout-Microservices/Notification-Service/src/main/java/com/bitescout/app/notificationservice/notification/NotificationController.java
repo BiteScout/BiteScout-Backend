@@ -6,12 +6,13 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/notifications")
+@RequestMapping("/v1/notifications")
 @RequiredArgsConstructor
 public class NotificationController {
 
@@ -20,6 +21,7 @@ public class NotificationController {
     //when the project progresses notifications will only be created via NotificationsConsumer and this
     //endpoint will be deleted, for now it's good for testing purposes.
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN') or @securityService.isOwner(#userId, principal)")
     public ResponseEntity<NotificationResponse> createNotification(
             @RequestBody @Valid NotificationRequest request,
             @RequestHeader(value = "User-Id") String userId
@@ -31,6 +33,7 @@ public class NotificationController {
 
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN') or @securityService.isOwner(#userId, principal)")
     public ResponseEntity<List<NotificationResponse>> getNotifications(
             @RequestHeader(value = "User-Id") String userId
     ){
@@ -40,6 +43,7 @@ public class NotificationController {
     }
 
     @PutMapping("/{notification-id}")
+    @PreAuthorize("hasRole('ADMIN') or @securityService.isOwner(#userId, principal)")
     public ResponseEntity<NotificationResponse> markAsSeen(
             @PathVariable("notification-id") Long notificationId,
             @RequestHeader(value = "User-Id") String userId
@@ -49,6 +53,7 @@ public class NotificationController {
 
 
     @DeleteMapping("/{notification-id}")
+    @PreAuthorize("hasRole('ADMIN') or @securityService.isOwner(#userId, principal)")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void deleteNotification(
             @PathVariable("notification-id") Long notificationId,

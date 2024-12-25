@@ -9,8 +9,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import java.util.List;
 import java.util.UUID;
 
-@FeignClient(name = "review-service", path = "api/v1/reviews")
-@Component
+@FeignClient(
+        name = "review-service",
+        url ="${application.config.reviews-url}"
+)@Component
 public interface ReviewClient {
 
     @GetMapping("/restaurant/{restaurantId}")

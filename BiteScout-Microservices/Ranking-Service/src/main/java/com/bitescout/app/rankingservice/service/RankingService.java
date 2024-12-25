@@ -31,18 +31,13 @@ public class RankingService {
     public RankingResponse getRestaurantRating(String restaurantId) {
         return rankingMapper.toRankingResponse(rankingRepository.findByRestaurantId(UUID.fromString(restaurantId)));
     }
-    public int getRestaurantTotalReviews(String restaurantId) {
-        return rankingRepository.findByRestaurantId(UUID.fromString(restaurantId)).getTotalReviews();
-    }
 
     public double calculateAverageRating(String restaurantId) {
 
-        double rating = reviewClient.getReviewsByRestaurant(UUID.fromString(restaurantId)).getBody().stream()
+        return reviewClient.getReviewsByRestaurant(UUID.fromString(restaurantId)).getBody().stream()
                 .mapToInt(ReviewDto::rating)
                 .average()
                 .orElse(0.0);
-
-        return rating;
     }
 
     public double calculatePopularityScore(UUID restaurantId) {
@@ -51,18 +46,29 @@ public class RankingService {
 
         return rating * Math.log1p(total_reviews);
     }
-    public Ranking submitRestaurantRating(String restaurantId) {
-       if(rankingRepository.findByRestaurantId(UUID.fromString(restaurantId)) == null) {
-           return submitNewRestaurantRating(restaurantId);
-       }
-         return updateRestaurantRating(restaurantId);
+    public void submitRestaurantRating() {
+        List<RestaurantDto> restaurants = restaurantClient.getRestaurants().getBody();
+        // Dereference of 'restaurants' may produce 'NullPointerException' if 'restaurants' is null
+        if (restaurants == null) {
+            throw new RuntimeException("No restaurants found");
+        }
+        for (RestaurantDto restaurantDto : restaurants) {
+            if (reviewClient.getReviewsByRestaurant(restaurantDto.getId()).getBody().isEmpty()) {
+                continue;
+            }
+            if (rankingRepository.findByRestaurantId(restaurantDto.getId()) == null) {
+                submitNewRestaurantRating(restaurantDto.getId().toString());
+            } else {
+                updateRestaurantRating(restaurantDto.getId().toString());
+            }
+        }
     }
-    public Ranking submitNewRestaurantRating(String restaurantId) {
+    public void submitNewRestaurantRating(String restaurantId) {
         double average_rating = calculateAverageRating(restaurantId);
         int total_reviews = reviewClient.getReviewsByRestaurant(UUID.fromString(restaurantId)).getBody().size();
         double popularity_score = calculatePopularityScore(UUID.fromString(restaurantId));
         TierRanking tierRanking = TierRanking.getTier(average_rating);
-        return rankingRepository.save(Ranking.builder()
+        rankingRepository.save(Ranking.builder()
                 .restaurantId(UUID.fromString(restaurantId))
                 .averageRating(average_rating)
                 .totalReviews(total_reviews)
@@ -70,7 +76,7 @@ public class RankingService {
                 .tierRanking(tierRanking)
                 .build());
     }
-    public Ranking updateRestaurantRating(String restaurantId) {
+    public void updateRestaurantRating(String restaurantId) {
         double average_rating = calculateAverageRating(restaurantId);
         int total_reviews = reviewClient.getReviewsByRestaurant(UUID.fromString(restaurantId)).getBody().size();
         double popularity_score = calculatePopularityScore(UUID.fromString(restaurantId));
@@ -81,7 +87,7 @@ public class RankingService {
         ranking.setTotalReviews(total_reviews);
         ranking.setPopularityScore(popularity_score);
         ranking.setTierRanking(tierRanking);
-        return rankingRepository.save(ranking);
+        rankingRepository.save(ranking);
     }
 
     public List<RankingResponse> getRanking() {
@@ -100,7 +106,6 @@ public class RankingService {
             rankingData.put("Restaurant Name", restaurantDto.getName());
             rankingData.put("Restaurant Cuisine", restaurantDto.getCuisineType());
             rankingData.put("Restaurant Price Range", restaurantDto.getPriceRange());
-            rankingData.put("Restaurant Location", restaurantDto.getLocation());
             rankingData.put("Average Rating", ranking.getAverageRating());
             rankingData.put("totalReviews", ranking.getTotalReviews());
             rankingData.put("popularityScore", ranking.getPopularityScore());
