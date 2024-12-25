@@ -3,6 +3,7 @@ package com.bitescout.app.reviewservice.review;
 import com.bitescout.app.reviewservice.review.dto.ReviewInteractionRequest;
 import com.bitescout.app.reviewservice.review.dto.ReviewRequest;
 import com.bitescout.app.reviewservice.review.dto.ReviewResponse;
+import com.bitescout.app.reviewservice.review.exception.ReviewNotFoundException;
 import jakarta.ws.rs.BadRequestException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -35,12 +36,15 @@ public class ReviewService {
     }
 
     public ReviewResponse getReview(String reviewId) {
-        var review = repository.findById(reviewId).get();
+
+        var review = repository.findById(reviewId).orElseThrow(()->new ReviewNotFoundException("review not found"));
         return mapper.toReviewResponse(review);
     }
 
     public ReviewResponse updateReview(ReviewRequest reviewRequest, String reviewId){
-        var existingReview = repository.findById(reviewId).get();
+
+        var existingReview = repository.findById(reviewId).orElseThrow(()->new ReviewNotFoundException("review not found"));
+
         existingReview.setComment(reviewRequest.comment());
         existingReview.setRating(reviewRequest.rating());
 
@@ -53,18 +57,20 @@ public class ReviewService {
         return review.getCustomerId();
     }
 
+
     public void deleteReview(String reviewId){
         repository.deleteById(reviewId);
     }
 
-    public ReviewInteraction createReviewInteraction(ReviewInteractionRequest request) {
+    public ReviewInteraction createReviewInteraction(ReviewInteractionRequest request, String userId) {
         if(repository.findById(request.reviewId()).isEmpty()){
-            throw new BadRequestException("review not found");
+            throw new ReviewNotFoundException("review not found");
         }
         var interaction = ReviewInteraction.builder()
                 .interactionType(request.interactionType())
                 .reviewId(request.reviewId())
-                .userId((request.userId()))
+
+                .interactingUserId(userId)
                 .replyText(request.replyText())
                 .build();
         interactionRepository.save(interaction);

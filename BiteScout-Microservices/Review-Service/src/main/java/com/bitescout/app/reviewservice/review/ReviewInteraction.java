@@ -19,8 +19,8 @@ public class ReviewInteraction {
     @Id
     private String id;
     private String reviewId;
-    @NotNull
-    private String userId;
+
+    private String interactingUserId;
     private InteractionType interactionType;
     private String replyText;
     @CreatedDate

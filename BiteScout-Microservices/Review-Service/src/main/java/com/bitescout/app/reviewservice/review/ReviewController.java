@@ -31,11 +31,12 @@ public class ReviewController {
 
     @PostMapping("/interaction")
     public ResponseEntity<ReviewInteraction> createReviewInteraction(
-            @RequestBody @Valid ReviewInteractionRequest request
+            @RequestBody @Valid ReviewInteractionRequest request,
+            @RequestHeader("User-Id") String userId
     ){
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(reviewService.createReviewInteraction(request));
+                .body(reviewService.createReviewInteraction(request, userId));
     }
 
     //Get all reviews
@@ -61,6 +62,7 @@ public class ReviewController {
             @RequestBody ReviewRequest reviewRequest,
             @PathVariable("reviewId") String reviewId,
             @RequestHeader("User-Id") String userId
+
     ){
         return ResponseEntity.status(HttpStatus.OK).body(reviewService.updateReview(reviewRequest,reviewId));
 
