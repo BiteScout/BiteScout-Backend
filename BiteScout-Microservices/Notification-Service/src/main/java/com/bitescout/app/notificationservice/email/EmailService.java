@@ -94,7 +94,7 @@ public class EmailService {
 
         Context context = new Context();
         context.setVariables(variables);
-        messageHelper.setSubject(EmailTemplates.RESERVATION_STATUS_NOTIFICATION.getSubject());
+        messageHelper.setSubject(EmailTemplates.INCOMING_RESERVATION_NOTIFICATION.getSubject());
 
         try{
             String htmlTemplate = templateEngine.process(templateName, context);
