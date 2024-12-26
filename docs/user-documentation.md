@@ -10,7 +10,7 @@ The **User Service Microservice** is part of BiteScout application that manages 
 - **User Management**: Create, read, update, delete, and enable user accounts.
 - **Authentication**: Uses JWT-based authentication for secure access.
 - **Favorites Management**: Add, fetch, and remove user favorites for restaurants.
-- **File Upload**: Handles user profile picture uploads and deletions via a Feign client to the file storage service.
+- **File Upload**: Handles user profile picture uploads and deletions.
 
 ---
 
@@ -26,7 +26,6 @@ The **User Service Microservice** is part of BiteScout application that manages 
 ## Package Structure
 ```
 com.bitescout.app.userservice
-├── client             # Feign clients for external services
 ├── configuration      # Configuration classes for beans and security
 ├── controller         # RESTful controllers for exposing APIs
 ├── dto                # Data Transfer Objects for external communication
@@ -41,28 +40,17 @@ com.bitescout.app.userservice
 
 ## Key Components
 
-### 1. **Client**
-The `FileStorageClient` interface facilitates communication with the file storage microservice to manage profile pictures.
-
-#### Key Methods:
-- `uploadImageToFileSystem`: Uploads a profile picture.
-- `deleteImageFromFileSystem`: Deletes a profile picture by ID.
-
----
-
-### 2. **Configuration**
+### 1. **Configuration**
 
 #### **BeanConfig**
 - Configures `ModelMapper` for object mapping.
 - Configures `BCryptPasswordEncoder` for password encryption.
-
+- Configures `RestTemplate`.
 #### **SecurityConfig**
 - Configures JWT-based security.
-- Disables CSRF, form login, and HTTP Basic authentication.
-
 ---
 
-### 3. **Controller**
+### 2. **Controller**
 
 #### **UserController**
 Handles user and favorite-related endpoints.
@@ -70,9 +58,12 @@ Handles user and favorite-related endpoints.
 ##### User Endpoints:
 - `POST /save`: Creates a new user.
 - `GET /{userId}`: Fetches user details.
-- `PUT /update`: Updates user details.
+- `PUT /update`: Updates user details and profile picture.
 - `DELETE /{userId}`: Deletes a user.
 - `GET /getAll`: Retrieves all users (Admin-only).
+- `GET /getUserByUsername/{username}`: Retrieves user by their username.
+- `PUT /enable-user/{userId}`: Enables user as active.
+- `DELETE /username/{username}`: Deletes user by their username.
 
 ##### Favorites Endpoints:
 - `POST /{userId}/favorites/{restaurantId}`: Adds a favorite restaurant for a user.
@@ -82,7 +73,7 @@ Handles user and favorite-related endpoints.
 
 ---
 
-### 4. **Entities**
+### 3. **Entities**
 
 #### **User**
 Represents a user in the system.
@@ -101,10 +92,10 @@ Enumeration defining user roles: `ADMIN`, `CUSTOMER`, `RESTAURANT_OWNER`.
 
 ---
 
-### 5. **DTOs**
+### 4. **DTOs**
 - **RegisterRequestDTO**: Captures data for user registration.
 - **UserDTO**: Represents a user for API responses.
-- **UserAuthDTO**: Represents user authentication data.
+- **UserAuthDTO**: Represents user authentication data response.
 - **UserUpdateRequestDTO**: Captures data for updating user information.
 - **FavoriteResponseDTO**: Represents a favorite restaurant for API responses.
 
@@ -124,20 +115,52 @@ Enumeration defining user roles: `ADMIN`, `CUSTOMER`, `RESTAURANT_OWNER`.
 ### User Update Request
 ```json
 {
-  "id": "123e4567-e89b-12d3-a456-426614174000",
+  "id": "2e5144e0-9ff6-46df-b254-bb98c8a2a8a6",
   "username": "newUsername",
   "password": "newSecurePass123",
+  "firstName": "John",
+  "lastName": "Doe",
+  "phoneNumber": "1234567890",
+  "country": "USA",
+  "city": "New York",
+  "postalCode": "10001",
+  "address": "123 Main Street",
+  "profilePicture": "profilePic.jpg"
+}
+```
+
+### UserDTO Response
+```json
+{
+  "id": "123e4567-e89b-12d3-a456-426614174000",
+  "username": "johndoe",
+  "email": "johndoe@example.com",
+  "enabled": true,
   "userDetails": {
     "firstName": "John",
     "lastName": "Doe",
-    "phoneNumber": "1234567890",
+    "phoneNumber": "+1234567890",
     "country": "USA",
     "city": "New York",
     "postalCode": "10001",
-    "address": "123 Main Street",
-    "profilePicture": "profilePic.jpg"
+    "address": "123 Main Street, Apartment 4B",
+    "profilePicture": "johndoe.jpg"
   }
 }
+
+```
+
+### UserAuthDTO Response
+```json
+{
+  "id": "123e4567-e89b-12d3-a456-426614174000",
+  "username": "john_doe",
+  "email": "john.doe@example.com",
+  "password": "password123",
+  "role": "USER",
+  "enabled": true
+}
+
 ```
 
 ### Favorite Response
@@ -155,11 +178,6 @@ Enumeration defining user roles: `ADMIN`, `CUSTOMER`, `RESTAURANT_OWNER`.
 - **Authentication**: Implements JWT for stateless authentication.
 - **Authorization**: Uses role-based and ownership-based permissions for endpoints.
 - **Password Encryption**: Uses `BCryptPasswordEncoder` to secure user passwords.
-
----
-
-## External Integrations
-- **File Storage Service**: Communicates via `FeignClient` for handling user profile pictures.
 
 ---
 

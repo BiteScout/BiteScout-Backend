@@ -47,14 +47,14 @@ public class BeanConfig {
 ### RestaurantController
 Provides endpoints for managing restaurants and special offers.
 
-**Base URL**: `/api/v1/restaurants/`
+**Base URL**: `/v1/restaurants/`
 
 | Method | Endpoint                          | Description                             |
 |--------|-----------------------------------|-----------------------------------------|
 | POST   | `/`                               | Create a new restaurant.               |
 | GET    | `/`                               | Retrieve all restaurants.              |
 | GET    | `/{restaurantId}`                 | Retrieve a specific restaurant.        |
-| GET    | `/{ownerId}`                      | Retrieve restaurants of specific owner.|
+| GET    | `/owner/{ownerId}`                      | Retrieve restaurants of specific owner.|
 | PUT    | `/{restaurantId}`                 | Update a restaurant.                   |
 | PUT    | `/{restaurantId}/update-menu`     | Update the menu of a restaurant        |
 | DELETE | `/{restaurantId}`                 | Delete a restaurant.                   |
@@ -75,23 +75,33 @@ Provides endpoints for managing restaurants and special offers.
 Represents the `Restaurant` entity stored in the `restaurants` table.
 
 ```java
-@Entity
 @Table(name = "restaurants")
 public class Restaurant {
-    @Id @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
     private UUID ownerId;
-    @Column(unique = true, nullable = false) private String name;
+
+    @Column(unique = true, nullable = false)
+    private String name;
+
     private String description;
+
     private String menu;
+
     private String cuisineType;
-    private String location;
+
+    @Column(columnDefinition = "geography(Point,4326)", nullable = false)
+    private Point location;
+
     private String priceRange;
 
-    @Column(nullable = false) private LocalDateTime createdAt;
-    @Column(nullable = false) private LocalDateTime updatedAt;
-}
+    @Column (nullable = false)
+    private LocalDateTime createdAt;
+
+    @Column (nullable = false)
+    private LocalDateTime updatedAt;
 ```
 
 ### SpecialOffer
@@ -125,56 +135,24 @@ public class SpecialOffer {
 ### RestaurantRequestDTO
 Used to create or update restaurant data.
 
-```java
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class RestaurantRequestDTO {
-    private String ownerId;
-    private String name;
-    private String description;
-    private String menu;
-    private String cuisineType;
-    private String location;
-    private String priceRange;
-}
-```
-
 **Example JSON**:
 ```json
 {
-  "ownerId": "123e4567-e89b-12d3-a456-426614174000",
-  "name": "Sushi Haven",
-  "description": "A delightful sushi experience.",
-  "menu": "Sushi Rolls, Sashimi, Miso Soup",
-  "cuisineType": "Japanese",
-  "location": "Tokyo, Japan",
+  "ownerId": "bfc97d79-c787-47bc-a276-e3f735c7658d",
+  "name": "Delicious XXX",
+  "description": "A nice place offering a mix of global and local cuisines.",
+  "menu": "https://example.com/qr-codes/menu1234526",
+  "cuisineType": "Italian",
+  "location": {
+    "type": "Point",
+    "coordinates": [12.4924, 41.8902]
+  },
   "priceRange": "$$$"
 }
 ```
 
 ### RestaurantResponseDTO
 Used to return restaurant data in responses.
-
-```java
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class RestaurantResponseDTO {
-    private String id;
-    private String ownerId;
-    private String name;
-    private String description;
-    private String menu;
-    private String cuisineType;
-    private String location;
-    private String priceRange;
-    private String createdAt;
-    private String updatedAt;
-}
-```
 
 **Example JSON**:
 ```json
@@ -185,7 +163,7 @@ public class RestaurantResponseDTO {
   "description": "A delightful sushi experience.",
   "menu": "Sushi Rolls, Sashimi, Miso Soup",
   "cuisineType": "Japanese",
-  "location": "Tokyo, Japan",
+  "location": "[12.4924, 41.8902]",
   "priceRange": "$$$",
   "createdAt": "2024-12-01T12:00:00",
   "updatedAt": "2024-12-10T15:00:00"
@@ -194,19 +172,6 @@ public class RestaurantResponseDTO {
 
 ### SpecialOfferRequestDTO
 Used to create or update special offers.
-
-```java
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class SpecialOfferRequestDTO {
-    private String title;
-    private String description;
-    private LocalDate startDate;
-    private LocalDate endDate;
-}
-```
 
 **Example JSON**:
 ```json
@@ -220,22 +185,6 @@ public class SpecialOfferRequestDTO {
 
 ### SpecialOfferResponseDTO
 Used to return special offer data in responses.
-
-```java
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class SpecialOfferResponseDTO {
-    private String id;
-    private String title;
-    private String description;
-    private LocalDate startDate;
-    private LocalDate endDate;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-}
-```
 
 **Example JSON**:
 ```json
@@ -261,11 +210,17 @@ Defines methods for accessing `Restaurant` entities.
 @Repository
 public interface RestaurantRepository extends JpaRepository<Restaurant, UUID> {
     List<Restaurant> findByOwnerId(UUID ownerId);
-    List<Restaurant> findByLocationNear(Point location, Distance distance);
+
+    @Query(value = "SELECT * FROM restaurants r WHERE ST_DWithin(r.location, ST_MakePoint(:longitude, :latitude)::geography, :radius)", nativeQuery = true)
+    List<Restaurant> findByLocationNear(
+            @Param("latitude") double latitude,
+            @Param("longitude") double longitude,
+            @Param("radius") double radiusInMeters
+    );
     List<Restaurant> findByNameContainingIgnoreCase(String query);
+
     List<Restaurant> findByCuisineTypeContainingIgnoreCase(String cuisineType);
     List<Restaurant> findByPriceRangeContainingIgnoreCase(String priceRange);
-}
 ```
 
 ### SpecialOfferRepository
