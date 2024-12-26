@@ -12,6 +12,7 @@ import com.bitescout.app.rankingservice.repository.RankingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -40,33 +41,41 @@ public class RankingService {
                 .orElse(0.0);
     }
 
-    public double calculatePopularityScore(UUID restaurantId) {
-        double rating = rankingRepository.findByRestaurantId(restaurantId).getAverageRating();
-        int total_reviews = reviewClient.getReviewsByRestaurant(restaurantId).getBody().size();
+    public double calculatePopularityScore(String restaurantId) {
+        Ranking ranking = rankingRepository.findByRestaurantId(UUID.fromString(restaurantId));
 
-        return rating * Math.log1p(total_reviews);
+        if (ranking == null) {
+            // Handle this case appropriately, e.g., return a default value or throw an exception
+            return 0.0;
+        }
+
+        // Safe to access ranking methods now
+        return ranking.getAverageRating() * ranking.getTotalReviews();
     }
+
     public void submitRestaurantRating() {
         List<RestaurantDto> restaurants = restaurantClient.getRestaurants().getBody();
         // Dereference of 'restaurants' may produce 'NullPointerException' if 'restaurants' is null
-        if (restaurants == null) {
-            throw new RuntimeException("No restaurants found");
-        }
         for (RestaurantDto restaurantDto : restaurants) {
-            if (reviewClient.getReviewsByRestaurant(restaurantDto.getId()).getBody().isEmpty()) {
-                continue;
+            ResponseEntity<List<ReviewDto>> response = reviewClient.getReviewsByRestaurant(restaurantDto.getId());
+            List<ReviewDto> reviews = response.getBody();
+
+            if (reviews == null || reviews.isEmpty()) {
+                continue; // Skip restaurants with no reviews
             }
+
             if (rankingRepository.findByRestaurantId(restaurantDto.getId()) == null) {
                 submitNewRestaurantRating(restaurantDto.getId().toString());
             } else {
                 updateRestaurantRating(restaurantDto.getId().toString());
             }
         }
+
     }
     public void submitNewRestaurantRating(String restaurantId) {
         double average_rating = calculateAverageRating(restaurantId);
         int total_reviews = reviewClient.getReviewsByRestaurant(UUID.fromString(restaurantId)).getBody().size();
-        double popularity_score = calculatePopularityScore(UUID.fromString(restaurantId));
+        double popularity_score = calculatePopularityScore((restaurantId));
         TierRanking tierRanking = TierRanking.getTier(average_rating);
         rankingRepository.save(Ranking.builder()
                 .restaurantId(UUID.fromString(restaurantId))
@@ -79,7 +88,7 @@ public class RankingService {
     public void updateRestaurantRating(String restaurantId) {
         double average_rating = calculateAverageRating(restaurantId);
         int total_reviews = reviewClient.getReviewsByRestaurant(UUID.fromString(restaurantId)).getBody().size();
-        double popularity_score = calculatePopularityScore(UUID.fromString(restaurantId));
+        double popularity_score = calculatePopularityScore((restaurantId));
         TierRanking tierRanking = TierRanking.getTier(average_rating);
 
         Ranking ranking = rankingRepository.findByRestaurantId(UUID.fromString(restaurantId));
@@ -97,7 +106,7 @@ public class RankingService {
         }
         if (weeklyRanking.size() > 10) {
             weeklyRanking.sort((r1, r2) -> Double.compare(r2.getPopularityScore(), r1.getPopularityScore()));
-            weeklyRanking.subList(0, 10);
+            weeklyRanking = weeklyRanking.subList(0, 10);
         }
         List<Map<String, Object>> cloudResponse = new ArrayList<>();
         for (Ranking ranking : weeklyRanking) {
@@ -114,7 +123,7 @@ public class RankingService {
         }
         saveToCloud(cloudResponse);
 
-        List<RankingResponse> weeklyRankingResponse = null;
+        List<RankingResponse> weeklyRankingResponse = new ArrayList<>();
         for (Ranking ranking : weeklyRanking) {
             weeklyRankingResponse.add(rankingMapper.toRankingResponse(ranking));
         }

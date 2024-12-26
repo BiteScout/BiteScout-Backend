@@ -15,7 +15,7 @@ import java.util.UUID;
 )@Component
 public interface ReviewClient {
 
-    @GetMapping("/restaurant/{restaurantId}")
+    @GetMapping("/restaurants/{restaurantId}")
     ResponseEntity<List<ReviewDto>> getReviewsByRestaurant(@PathVariable("restaurantId") UUID restaurantId);
 
 }

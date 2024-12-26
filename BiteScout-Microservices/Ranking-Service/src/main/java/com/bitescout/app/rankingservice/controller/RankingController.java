@@ -13,19 +13,19 @@ import java.util.Map;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/v1/ratings")
+@RequestMapping("/v1/ranking")
 @RequiredArgsConstructor
 public class RankingController {
 
     private final RankingService rankingService;
     // Controller to get ratings by restaurant from review service and calculate ranking
-    @PostMapping("/restaurant")
+    @PostMapping("/submit")
     public ResponseEntity<Void> submitRating() {
         rankingService.submitRestaurantRating();
         return ResponseEntity.ok().build();
     }
     // Controller to post notifications to cloud run
-    @GetMapping("/ranking")
+    @GetMapping("/weekly")
     public ResponseEntity<List<RankingResponse>> notificationWeekly() {
         return ResponseEntity.ok(rankingService.getRanking());
     }
