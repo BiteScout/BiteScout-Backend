@@ -1,22 +1,35 @@
 package com.bitescout.app.notificationservice.restaurant;
 
-import org.apache.kafka.common.protocol.types.Field;
+
+import com.bitescout.app.notificationservice.restaurant.util.PointDeserializer;
+import com.bitescout.app.notificationservice.restaurant.util.PointSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.locationtech.jts.geom.Point;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
-public record RestaurantResponse(
-        String id,
-        String ownerId,
-        String name,
-        String description,
-        String menu,
-        String cuisineType,
-        String location,
-        String priceRange,
-        LocalDateTime createdAt,
-        LocalDateTime updatedAt
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class RestaurantResponse {
+    private UUID id;
+    private UUID ownerId;
+    private String name;
+    private String description;
+    private String menu;
+    private String cuisineType;
 
-) {
+    @JsonDeserialize(using = PointDeserializer.class)
+    @JsonSerialize(using = PointSerializer.class)
+    private Point location;
+    private String priceRange;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }
