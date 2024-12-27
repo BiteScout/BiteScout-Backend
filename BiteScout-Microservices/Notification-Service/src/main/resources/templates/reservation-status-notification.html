@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
     <style>
         body {
@@ -60,11 +60,11 @@
         Bitescout Reservation Update
     </div>
     <div class="content">
-        Dear <strong>{{ customer-name }}</strong>,
+        <p>Dear <span th:text="${customerName}"></span>,</p>
         <p>
-            We wanted to let you know that your reservation with ID <strong>{{ id }}</strong> at <strong>{{ restaurant-name }}</strong> for
-            <strong>{{ reservation-time }}</strong> has been
-            <span class="status">{{ status }}</span>.
+            We wanted to let you know that your reservation with ID <strong th:text="${id}"></strong> at <strong th:text="${restaurantName}"></strong> for
+            <strong th:text="${reservationTime}"></strong> has been
+            <span th:text="${status}"></span>.
         </p>
         <p>
             If you have any questions or need to update your reservation, please contact the restaurant directly.
@@ -73,7 +73,7 @@
     <div class="footer">
         This message was sent to you by <strong>Bitescout</strong>.
         <br>
-        Visit our website at <a href="https://www.bitescout.com">www.bitescout.com</a>.
+        Visit our website at <a href="http://www.bitescout.com">www.bitescout.com</a>.
     </div>
 </div>
 </body>

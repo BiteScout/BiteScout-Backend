@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html>
-<head>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -56,16 +55,16 @@
         New Reservation Request
     </div>
     <div class="content">
-        Dear <strong>{{ restaurant-owner-name }}</strong>,
+        <p >Dear <span th:text="${restaurantOwnerName}"></span></p>
         <p>
-            A new reservation request has been made for your restaurant, <strong>{{ restaurant-name }}</strong>.
+            A new reservation request has been made for your restaurant, <b th:text="${restaurantName}"></b>
         </p>
         <p>
             <strong>Details:</strong>
         <ul>
-            <li><strong>Reservation ID:</strong> {{ reservation-id }}</li>
-            <li><strong>Customer Name:</strong> {{ customer-name }}</li>
-            <li><strong>Reservation Time:</strong> {{ reservation-time }}</li>
+            <li><strong>Reservation ID:</strong> <b th:text="${reservationId}"></b></li>
+            <li><strong>Customer Name:</strong> <b th:text="${customerName}"></b></li>
+            <li><strong>Reservation Time:</strong> <b th:text="${reservationTime}"></b></li>
         </ul>
         </p>
         <p>
