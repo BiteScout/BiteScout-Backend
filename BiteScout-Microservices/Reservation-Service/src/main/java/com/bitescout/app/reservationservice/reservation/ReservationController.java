@@ -38,7 +38,7 @@ public class ReservationController {
 
     //need to know if restaurant-id belongs to the person who sent this request
     //check in the filter chain the person who sent this is the restaurant owner
-    @PreAuthorize("hasRole('ADMIN') or ((@securityService.isRestaurantOwner(#restaurantId, principal) and hasRole('RESTAURANT_OWNER'))")
+    @PreAuthorize("hasRole('ADMIN') or (@securityService.isRestaurantOwner(#restaurantId, principal) and hasRole('RESTAURANT_OWNER'))")
     @GetMapping("/restaurants/{restaurantId}")
     public ResponseEntity<List<ReservationResponse>> getAllReservationsForRestaurant(
             @PathVariable("restaurantId") String restaurantId
@@ -68,12 +68,12 @@ public class ReservationController {
         service.deleteReservationOwner(reservationId, userId);
     }
 
-    @DeleteMapping("user/{reservation-id}")
+    @DeleteMapping("/user/{reservation-id}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('ADMIN') or @securityService.isReservationUser(#reservationId, principal)")
     public void deleteReservationUser(
             @PathVariable("reservation-id") Long reservationId,
-            @RequestHeader(value = "User-Id") String userId
+            @RequestAttribute(value = "userId") String userId
     )
     {
         service.deleteReservation(reservationId, userId);
