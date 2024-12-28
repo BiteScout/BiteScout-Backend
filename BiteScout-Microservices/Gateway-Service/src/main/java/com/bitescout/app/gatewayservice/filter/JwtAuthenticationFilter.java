@@ -25,8 +25,7 @@ public class JwtAuthenticationFilter implements GatewayFilter {
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
 
-        final List<String> publicEndpoints = List.of("/auth", "/eureka", "/restaurants", "/reviews ","/users");
-
+        final List<String> publicEndpoints = List.of("/auth", "/eureka", "/restaurants", "/reviews", "/users");
         Predicate<ServerHttpRequest> isApiSecured = r -> publicEndpoints.stream()
                 .noneMatch(uri -> r.getURI().getPath().contains(uri));
 
@@ -35,16 +34,35 @@ public class JwtAuthenticationFilter implements GatewayFilter {
 
             String token = request.getHeaders().getOrEmpty("Authorization").get(0);
 
-            if (token != null && token.startsWith("Bearer ")) token = token.substring(7);
+            if (token != null && token.startsWith("Bearer ")) {
+                token = token.substring(7);
+            }
 
             try {
                 jwtUtil.validateToken(token);
-
             } catch (Exception e) {
                 return onError(exchange);
             }
+
+            // Add user-id to header for specific endpoints
+            if (isSpecificEndpoint(request)) {
+                String userId = jwtUtil.extractClaim(token, "User-id"); // Extract user-id from the token
+                if (userId != null) {
+                    System.out.println("User-id: " + userId);
+                    ServerHttpRequest modifiedRequest = exchange.getRequest().mutate()
+                            .header("User-id", userId)
+                            .build();
+                    return chain.filter(exchange.mutate().request(modifiedRequest).build());
+                }
+            }
         }
+
         return chain.filter(exchange);
+    }
+
+    private boolean isSpecificEndpoint(ServerHttpRequest request) {
+        return request.getURI().getPath().contains("reservations") ||
+                request.getURI().getPath().contains("notifications");
     }
 
     private Mono<Void> onError(ServerWebExchange exchange) {
@@ -57,4 +75,3 @@ public class JwtAuthenticationFilter implements GatewayFilter {
         return !request.getHeaders().containsKey("Authorization");
     }
 }
-
