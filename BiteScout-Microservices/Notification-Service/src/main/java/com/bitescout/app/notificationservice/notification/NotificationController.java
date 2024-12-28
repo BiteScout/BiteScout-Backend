@@ -24,7 +24,7 @@ public class NotificationController {
     @PreAuthorize("hasRole('ADMIN') or @securityService.isOwner(#userId, principal)")
     public ResponseEntity<NotificationResponse> createNotification(
             @RequestBody @Valid NotificationRequest request,
-            @RequestHeader(value = "User-Id") String userId
+            @RequestAttribute(value = "userId") String userId
     ){
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -35,7 +35,7 @@ public class NotificationController {
     @GetMapping
     @PreAuthorize("hasRole('ADMIN') or @securityService.isOwner(#userId, principal)")
     public ResponseEntity<List<NotificationResponse>> getNotifications(
-            @RequestHeader(value = "User-Id") String userId
+            @RequestAttribute(value = "userId") String userId
     ){
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -46,7 +46,7 @@ public class NotificationController {
     @PreAuthorize("hasRole('ADMIN') or @securityService.isOwner(#userId, principal)")
     public ResponseEntity<NotificationResponse> markAsSeen(
             @PathVariable("notification-id") Long notificationId,
-            @RequestHeader(value = "User-Id") String userId
+            @RequestAttribute(value = "userId") String userId
     ) {
         return ResponseEntity.ok(service.markAsSeen(notificationId, userId));
     }
@@ -57,7 +57,7 @@ public class NotificationController {
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void deleteNotification(
             @PathVariable("notification-id") Long notificationId,
-            @RequestHeader(value = "User-Id") String userId
+            @RequestAttribute(value = "userId") String userId
     ){
         service.deleteNotification(notificationId, userId);
     }

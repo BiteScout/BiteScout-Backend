@@ -26,6 +26,7 @@ import java.util.Collections;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
+    private final UserClient userClient;
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
@@ -37,11 +38,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (StringUtils.hasText(token) && token.startsWith("Bearer ")) {
                 Claims claims = jwtUtil.getClaims(token.substring(7));
 
+                String username = claims.getSubject();
+                String id = String.valueOf(userClient.getUserByUsername(username).get().getId());
+
                 SimpleGrantedAuthority authority = new SimpleGrantedAuthority(claims.getIssuer());
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                         claims.getSubject(), null, Collections.singleton(authority));
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+                request.setAttribute("userId", id);;
             }
 
         } catch (Exception e) {

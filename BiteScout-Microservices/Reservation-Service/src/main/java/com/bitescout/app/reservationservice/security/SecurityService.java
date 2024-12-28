@@ -1,11 +1,13 @@
 package com.bitescout.app.reservationservice.security;
 
 
+
 import com.bitescout.app.reservationservice.reservation.Reservation;
 import com.bitescout.app.reservationservice.reservation.ReservationRepository;
 import com.bitescout.app.reservationservice.restaurant.RestaurantClient;
 import com.bitescout.app.reservationservice.restaurant.RestaurantDTO;
 import com.bitescout.app.reservationservice.restaurant.RestaurantResponse;
+
 import com.bitescout.app.reservationservice.user.UserClient;
 import com.bitescout.app.reservationservice.user.UserResponse;
 import lombok.RequiredArgsConstructor;
@@ -15,13 +17,16 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+
 @Service
 @RequiredArgsConstructor
 public class SecurityService {
     private static final Logger log = LoggerFactory.getLogger(SecurityService.class);
     private final UserClient userClient;
+
     private final RestaurantClient restaurantClient;
     private final ReservationRepository reservationRepository;
+
 
     public boolean isOwner(String ownerId, String principal) {
         UserResponse user = userClient.getUser(ownerId).get();
@@ -35,6 +40,7 @@ public class SecurityService {
 
         return false;
     }
+
     public boolean isRestaurantOwner(String restaurantId, String principal) {
         UserResponse user = userClient.getUserByUsername(principal).orElse(null);
         if (user == null) {
@@ -101,6 +107,7 @@ public class SecurityService {
         // Check if the user is the owner of the reservation
         return reservation.getCustomerId().trim().equalsIgnoreCase(user.id().trim());
     }
+
 
 
 

@@ -3,6 +3,7 @@ package com.bitescout.app.reviewservice.review;
 import com.bitescout.app.reviewservice.review.dto.ReviewInteractionRequest;
 import com.bitescout.app.reviewservice.review.dto.ReviewRequest;
 import com.bitescout.app.reviewservice.review.dto.ReviewResponse;
+import com.bitescout.app.reviewservice.review.dto.ReviewUpdateRequest;
 import com.bitescout.app.reviewservice.review.exception.ReviewNotFoundException;
 import jakarta.ws.rs.BadRequestException;
 import lombok.RequiredArgsConstructor;
@@ -41,9 +42,9 @@ public class ReviewService {
         return mapper.toReviewResponse(review);
     }
 
-    public ReviewResponse updateReview(ReviewRequest reviewRequest, String reviewId){
+    public ReviewResponse updateReview(ReviewUpdateRequest reviewRequest){
 
-        var existingReview = repository.findById(reviewId).orElseThrow(()->new ReviewNotFoundException("review not found"));
+        var existingReview = repository.findById(reviewRequest.reviewId()).orElseThrow(()->new ReviewNotFoundException("review not found"));
 
         existingReview.setComment(reviewRequest.comment());
         existingReview.setRating(reviewRequest.rating());

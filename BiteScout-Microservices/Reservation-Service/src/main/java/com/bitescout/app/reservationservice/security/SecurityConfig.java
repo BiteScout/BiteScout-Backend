@@ -23,7 +23,8 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable) // Disable CSRF protection
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/v1/reservations").authenticated()
+                        .requestMatchers("/v1/reservations/**").authenticated()
+
                         .anyRequest().permitAll())
                 .formLogin(AbstractHttpConfigurer::disable)  // Disable form login (new approach)
                 .httpBasic(AbstractHttpConfigurer::disable)  // Disable HTTP Basic (new approach)

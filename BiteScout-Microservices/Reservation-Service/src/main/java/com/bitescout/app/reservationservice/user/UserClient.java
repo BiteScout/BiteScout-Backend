@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
+
 import java.util.Optional;
 
 @FeignClient(
@@ -13,6 +14,7 @@ import java.util.Optional;
 )
 public interface UserClient {
 
+
     @GetMapping("/get-users-by-favorited-restaurant/{restaurant-id}")
     public List<UserResponse> getUsersByFavoritedRestaurant(@PathVariable("restaurant-id") String restaurantId);
 
@@ -20,4 +22,6 @@ public interface UserClient {
     public Optional<UserResponse> getUser(@PathVariable("user-id") String userId);
 
     @GetMapping("/getUserByUsername/{username}")
+
     public Optional<UserResponse> getUserByUsername(@PathVariable("username") String username);}
+

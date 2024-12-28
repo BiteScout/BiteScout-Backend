@@ -1,5 +1,9 @@
 package com.bitescout.app.reservationservice.security;
 
+
+
+import com.bitescout.app.reservationservice.user.UserClient;
+
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -23,6 +27,9 @@ import java.util.Collections;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
 
+    private final UserClient userClient;
+
+
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
                                     @NonNull HttpServletResponse response,
@@ -32,12 +39,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             if (StringUtils.hasText(token) && token.startsWith("Bearer ")) {
                 Claims claims = jwtUtil.getClaims(token.substring(7));
+                String username = claims.getSubject();
+                String id = String.valueOf(userClient.getUserByUsername(username).get().id());
 
                 SimpleGrantedAuthority authority = new SimpleGrantedAuthority(claims.getIssuer());
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                         claims.getSubject(), null, Collections.singleton(authority));
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+                request.setAttribute("userId", id);;
             }
 
         } catch (Exception e) {

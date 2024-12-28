@@ -23,7 +23,7 @@ public class ReservationController {
     @PreAuthorize("hasRole('ADMIN') or @securityService.isOwner(#userId, principal)")
     public ResponseEntity<ReservationResponse> createReservation(
             @RequestBody @Valid ReservationRequest request,
-            @RequestHeader("User-Id") String userId
+            @RequestAttribute("userId") String userId
     ){
         return ResponseEntity.status(HttpStatus.CREATED).body(service.createReservation(request, userId));
     }
@@ -31,7 +31,7 @@ public class ReservationController {
     @GetMapping("/users")
     @PreAuthorize("hasRole('ADMIN') or @securityService.isOwner(#userId, principal)")
     public ResponseEntity<List<ReservationResponse>> getAllReservationsForUser(
-            @RequestHeader("User-Id") String userId
+            @RequestAttribute("userId") String userId
     ){
         return ResponseEntity.ok(service.getAllReservationsForUser(userId));
     }
@@ -62,7 +62,7 @@ public class ReservationController {
     @PreAuthorize("hasRole('ADMIN') or (@securityService.isRestaurantOwnerReservations(#reservationId, principal) and hasRole('RESTAURANT_OWNER'))")
     public void deleteReservation(
             @PathVariable("reservation-id") Long reservationId,
-            @RequestHeader(value = "User-Id") String userId
+            @RequestAttribute("userId") String userId
     )
     {
         service.deleteReservationOwner(reservationId, userId);

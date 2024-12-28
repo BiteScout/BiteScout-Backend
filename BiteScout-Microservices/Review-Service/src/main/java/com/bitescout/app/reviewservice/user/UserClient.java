@@ -1,22 +1,18 @@
-package com.bitescout.app.notificationservice.user;
+package com.bitescout.app.reviewservice.user;
 
+import com.bitescout.app.reservationservice.user.UserAuthDTO;
+import com.bitescout.app.reservationservice.user.UserResponse;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @FeignClient(
-        name = "user-service",
+        name = "user-service-rev",
         url = "${application.config.users-url}"
 )
 public interface UserClient {
-
-    @GetMapping("/get-users-by-favorited-restaurant/{restaurant-id}")
-    public List<UserResponse> getUsersByFavoritedRestaurant(@PathVariable("restaurant-id") String restaurantId);
 
     @GetMapping("/{user-id}")
     public Optional<UserResponse> getUser(@PathVariable("user-id") String userId);
