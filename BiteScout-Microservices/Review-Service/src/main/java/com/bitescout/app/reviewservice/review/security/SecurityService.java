@@ -36,6 +36,18 @@ public class SecurityService {
         return false;
     }
 
+    public boolean isOwnerDeleteInteraction(String reviewInteractionId, String principal) {
+        String ownerId = reviewService.getReviewInteractionOwer(reviewInteractionId);
+        UserDTO user = userServiceClient.getUser(ownerId).getBody();
+        if (user != null) {
+            System.out.println("Owner ID: " + ownerId);
+            System.out.println("Principal: " + principal);
+            System.out.println("Owner Username: " + user.getUsername());
+            return user.getUsername().equals(principal);
+        }
+        return false;
+    }
+
 
 
 
