@@ -7,4 +7,4 @@ spring:
   ranking:
     email:
       service:
-        url: https://gcloud-storage-264767797819.us-central1.run.app/api/storage
+        url: https://bite-scout-ranking-264767797819.us-central1.run.app/api/ranking

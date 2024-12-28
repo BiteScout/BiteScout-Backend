@@ -9,3 +9,7 @@ spring:
       port: 27017
       database: reviews
       authentication-database: admin
+
+application:
+  config:
+    users-url: http://localhost:8222/v1/users

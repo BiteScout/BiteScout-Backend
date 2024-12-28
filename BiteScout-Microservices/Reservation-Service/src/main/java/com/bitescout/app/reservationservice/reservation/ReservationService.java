@@ -74,4 +74,10 @@ public class ReservationService {
                         reservationId, userId)));
         repository.deleteById(reservationId);
     }
+
+    public void deleteReservationOwner(Long reservationId, String ownerId) {
+        var reservation = repository.findById(reservationId).orElseThrow(()->
+                new ReservationNotFoundException(String.format("Reservation with id %d not found", reservationId)));
+        repository.deleteById(reservationId);
+    }
 }

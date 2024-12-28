@@ -19,4 +19,6 @@ public class CustomUserDetailsService implements UserDetailsService {
         assert user != null;
         return new CustomUserDetails(user);
     }
+
+
 }
