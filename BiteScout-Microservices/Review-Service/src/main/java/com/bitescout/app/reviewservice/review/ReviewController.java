@@ -3,6 +3,7 @@ package com.bitescout.app.reviewservice.review;
 import com.bitescout.app.reviewservice.review.dto.ReviewInteractionRequest;
 import com.bitescout.app.reviewservice.review.dto.ReviewRequest;
 import com.bitescout.app.reviewservice.review.dto.ReviewResponse;
+import com.bitescout.app.reviewservice.review.dto.ReviewUpdateRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
@@ -24,7 +25,7 @@ public class ReviewController {
     @PostMapping
     public ResponseEntity<ReviewResponse> createReview(
             @RequestBody @Valid ReviewRequest reviewRequest,
-            @RequestHeader("User-Id") String userId
+            @RequestAttribute("userId") String userId
     ) {
         return ResponseEntity.status(HttpStatus.CREATED).body(reviewService.createReview(reviewRequest, userId));
     }
@@ -32,7 +33,7 @@ public class ReviewController {
     @PostMapping("/interaction")
     public ResponseEntity<ReviewInteraction> createReviewInteraction(
             @RequestBody @Valid ReviewInteractionRequest request,
-            @RequestHeader("User-Id") String userId
+            @RequestAttribute("userId") String userId
     ){
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -59,12 +60,11 @@ public class ReviewController {
     @PutMapping("/{reviewId}") // userId ReviewRequest'ten de alabiliriz headerdan da alabiliriz
     @PreAuthorize("hasRole('ADMIN') or @securityService.isOwner(#userId, principal)")
     public ResponseEntity<ReviewResponse> updateReview(
-            @RequestBody ReviewRequest reviewRequest,
-            @PathVariable("reviewId") String reviewId,
-            @RequestHeader("User-Id") String userId
+            @RequestBody ReviewUpdateRequest reviewRequest,
+            @RequestAttribute("userId") String userId
 
     ){
-        return ResponseEntity.status(HttpStatus.OK).body(reviewService.updateReview(reviewRequest,reviewId));
+        return ResponseEntity.status(HttpStatus.OK).body(reviewService.updateReview(reviewRequest));
 
     }
 

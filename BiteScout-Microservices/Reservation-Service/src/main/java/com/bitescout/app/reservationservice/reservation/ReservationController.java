@@ -21,14 +21,14 @@ public class ReservationController {
     @PostMapping
     public ResponseEntity<ReservationResponse> createReservation(
             @RequestBody @Valid ReservationRequest request,
-            @RequestHeader("User-Id") String userId
+            @RequestAttribute("userId") String userId
     ){
         return ResponseEntity.status(HttpStatus.CREATED).body(service.createReservation(request, userId));
     }
 
     @GetMapping("/users")
     public ResponseEntity<List<ReservationResponse>> getAllReservationsForUser(
-            @RequestHeader("User-Id") String userId
+            @RequestAttribute("userId") String userId
     ){
         return ResponseEntity.ok(service.getAllReservationsForUser(userId));
     }
@@ -57,7 +57,7 @@ public class ReservationController {
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void deleteReservation(
             @PathVariable("reservation-id") Long reservationId,
-            @RequestHeader(value = "User-Id") String userId
+            @RequestAttribute("userId") String userId
     )
     {
         service.deleteReservation(reservationId, userId);
