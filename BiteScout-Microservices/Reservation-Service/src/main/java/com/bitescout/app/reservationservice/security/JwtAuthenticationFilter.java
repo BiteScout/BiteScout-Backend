@@ -1,14 +1,12 @@
-package com.bitescout.app.notificationservice.security;
+package com.bitescout.app.reservationservice.security;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import com.bitescout.app.notificationservice.user.UserClient;
+
+import com.bitescout.app.reservationservice.user.UserClient;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpServletRequestWrapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
