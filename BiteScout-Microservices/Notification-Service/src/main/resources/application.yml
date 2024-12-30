@@ -4,15 +4,3 @@ spring:
   cloud:
     config:
       import: optional:configserver:http://localhost:8888
-
-spring:
-  datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://127.0.0.1:5432/notification_service_db
-    username: postgres
-    password: 1234
-  jpa:
-    hibernate:
-      ddl-auto: validate
-    database: postgresql
-    database-platform: org.hibernate.dialect.PostgreSQLDialect

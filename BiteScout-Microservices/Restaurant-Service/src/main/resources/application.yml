@@ -3,19 +3,3 @@ spring:
     import: optional:configserver:http://localhost:8888
   application:
     name: restaurant-service
-    
-spring:
-  datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://127.0.0.1:5432/restaurant_service_db
-    username: postgres
-    password: 1234
-  jpa:
-    database-platform: org.hibernate.spatial.dialect.postgis.PostgisDialect # PostGIS dialect
-    hibernate:
-      ddl-auto: validate # Schema doğrulama
-    properties:
-      hibernate:
-        dialect: org.hibernate.spatial.dialect.postgis.PostgisDialect
-  liquibase:
-    enabled: false # Eğer Liquibase kullanmıyorsanız kapatabilirsiniz
