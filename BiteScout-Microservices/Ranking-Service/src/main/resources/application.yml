@@ -7,4 +7,15 @@ spring:
   ranking:
     email:
       service:
-        url: https://gcloud-storage-264767797819.us-central1.run.app/api/storage
+        url: https://bite-scout-ranking-264767797819.us-central1.run.app/api/ranking
+
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://127.0.0.1:5432/ranking_service_db
+    username: postgres
+    password: 1234
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    database-platform: org.hibernate.dialect.PostgreSQLDialect

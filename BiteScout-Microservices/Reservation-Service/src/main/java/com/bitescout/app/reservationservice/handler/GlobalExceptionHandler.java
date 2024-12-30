@@ -24,12 +24,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(InvalidStatusRequestException.class)
     public ResponseEntity<String> handle(InvalidStatusRequestException exp){
         return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
+                .status(HttpStatus.BAD_REQUEST)
                 .body(exp.getMessage());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleReservationNotFoundException(MethodArgumentNotValidException exp){
+    public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException exp){
 
         var errors = new HashMap<String, String>();
         exp.getBindingResult().getAllErrors()

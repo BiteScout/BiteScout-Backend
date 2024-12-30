@@ -12,6 +12,7 @@ import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -36,18 +37,18 @@ public class EmailService {
         MimeMessage mimeMessage = mailSender.createMimeMessage();
         MimeMessageHelper messageHelper = new MimeMessageHelper(
                 mimeMessage,
-                MimeMessageHelper.MULTIPART_MODE_RELATED,
+                MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
                 UTF_8.name());
         messageHelper.setFrom("infobitescout@gmail.com");  //email subject to change
 
         final String templateName = EmailTemplates.RESERVATION_STATUS_NOTIFICATION.getTemplate();
 
         Map<String, Object> variables = new HashMap<>();
-        variables.put("customer-name", customerName);
-        variables.put("restaurant-name", restaurantName);
-        variables.put("reservation-time", reservationTime);
+        variables.put("customerName", customerName);
+        variables.put("restaurantName", restaurantName);
+        variables.put("reservationTime", reservationTime);
         variables.put("status", status);
-        variables.put("reservation-id", reservationId);
+        variables.put("reservationId", reservationId);
 
         Context context = new Context();
         context.setVariables(variables);
@@ -79,27 +80,29 @@ public class EmailService {
         MimeMessage mimeMessage = mailSender.createMimeMessage();
         MimeMessageHelper messageHelper = new MimeMessageHelper(
                 mimeMessage,
-                MimeMessageHelper.MULTIPART_MODE_RELATED,
+                MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
                 UTF_8.name());
         messageHelper.setFrom("infobitescout@gmail.com");  //email subject to change
 
         final String templateName = EmailTemplates.INCOMING_RESERVATION_NOTIFICATION.getTemplate();
 
         Map<String, Object> variables = new HashMap<>();
-        variables.put("restaurant-owner-name", restaurantOwnerName);
-        variables.put("restaurant-name", restaurantName);
-        variables.put("customer-name", customerName);
-        variables.put("reservation-time", reservationTime);
-        variables.put("reservation-id", reservationId);
+        variables.put("restaurantOwnerName", restaurantOwnerName);
+        variables.put("restaurantName", restaurantName);
+        variables.put("reservationId", reservationId);
+        variables.put("customerName", customerName);
+        variables.put("reservationTime", reservationTime);
+
 
         Context context = new Context();
         context.setVariables(variables);
-        messageHelper.setSubject(EmailTemplates.RESERVATION_STATUS_NOTIFICATION.getSubject());
+        context.setLocale(Locale.ENGLISH);
+        messageHelper.setSubject(EmailTemplates.INCOMING_RESERVATION_NOTIFICATION.getSubject());
 
         try{
             String htmlTemplate = templateEngine.process(templateName, context);
-            messageHelper.setText(htmlTemplate, true);
 
+            messageHelper.setText(htmlTemplate, true);
             messageHelper.setTo(destinationEmail);
             mailSender.send(mimeMessage);
             log.info(String.format("INFO - Email successfully sent to %s with template %s",

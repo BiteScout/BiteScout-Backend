@@ -12,11 +12,4 @@ public class RankingMapper {
                 ranking.getTierRanking()
         );
     }
-
-    public Ranking toRanking(RankingResponse rankingResponse) {
-        return Ranking.builder()
-                .averageRating(rankingResponse.averageRating())
-                .tierRanking(rankingResponse.tierRanking())
-                .build();
-    }
 }

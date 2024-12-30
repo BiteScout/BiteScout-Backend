@@ -18,3 +18,8 @@ spring:
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       properties:
         spring.json.type.mapping: reservationStatusMessage:com.bitescout.app.reservationservice.kafka.ReservationStatusMessage
+application:
+  config:
+    reviews-url: http://localhost:8222/v1/reviews
+    restaurants-url: http://localhost:8222/v1/restaurants
+    users-url: http://localhost:8222/v1/users

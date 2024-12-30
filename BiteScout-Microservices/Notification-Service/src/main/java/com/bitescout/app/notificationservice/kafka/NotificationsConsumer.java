@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
 
 import static java.lang.String.format;
 
@@ -47,9 +48,9 @@ public class NotificationsConsumer {
         log.info(format("Consuming reservation status message from reservation-status-topic %s", message));
 
         String status = message.reservationStatus() == ReservationStatus.ACCEPTED ? "accepted" : "rejected";
-        String restaurantName = restaurantClient.getRestaurant(String.valueOf(message.restaurantId())).get().name();
+        String restaurantName = restaurantClient.getRestaurant(String.valueOf(message.restaurantId())).get().getName();
         UserResponse userResponse = userClient.getUser(String.valueOf(message.customerId())).get();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm dd-MM");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d MMMM HH:mm", Locale.ENGLISH);
         String formattedTime = message.reservationTime().format(formatter);
 
         repository.save(Notification.builder()
@@ -60,9 +61,18 @@ public class NotificationsConsumer {
                 .notificationType(NotificationType.RESERVATION_STATUS_NOTIFICATION)
                 .build());
 
+        String customerName;
+
+        if(userResponse.userDetails() == null) {
+            customerName = userResponse.username();
+        }
+        else {
+            customerName = userResponse.userDetails().firstName() + " " + userResponse.userDetails().lastName();
+        }
+
         emailService.sendReservationStatusEmail(
                 userResponse.email(),
-                userResponse.userDetails().firstName() + " " + userResponse.userDetails().lastName(),
+                customerName,
                 restaurantName,
                 status,
                 formattedTime,
@@ -75,31 +85,48 @@ public class NotificationsConsumer {
     public void consumerIncomingReservationTopic(ReservationStatusMessage message) throws MessagingException {
         log.info(format("Consuming incoming reservation message from incoming-reservation-topic %s",message));
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm dd-MM");
-        String formattedTime = message.createdAt().format(formatter);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d MMMM HH:mm", Locale.ENGLISH);
+        String formattedTime = message.reservationTime().format(formatter);
 
         RestaurantResponse response = restaurantClient.getRestaurant(String.valueOf(message.restaurantId())).get();
-        String restaurantName = response.name();
-        UserResponse owner = userClient.getUser(String.valueOf(response.ownerId())).get(); //this is restaurant owner
+        String restaurantName = response.getName();
+        UserResponse owner = userClient.getUser(String.valueOf(response.getOwnerId())).get(); //this is restaurant owner
         UserResponse customer = userClient.getUser(String.valueOf(message.customerId())).get();
 
+        String ownerName;
+        String customerName;
+
+        if(owner.userDetails() == null) {
+            ownerName = owner.username();
+        }
+        else {
+            ownerName = owner.userDetails().firstName() + " " + owner.userDetails().lastName();
+        }
+
+        if(customer.userDetails() == null) {
+            customerName = customer.username();
+        }
+        else {
+            customerName = customer.userDetails().firstName() + " " + customer.userDetails().lastName();
+        }
+
         repository.save(Notification.builder()
-                .userId(String.valueOf(response.ownerId()))
+                .userId(String.valueOf(response.getOwnerId()))
                 //Message subject to change
                 .message(format("A reservation request with id %d to your restaurant %s was made by " +
                                 "%s for time %s",
                         message.id(),
                         restaurantName,
-                        customer.userDetails().firstName() + " " + customer.userDetails().lastName(),
+                        customerName,
                         formattedTime))
                 .notificationType(NotificationType.INCOMING_RESERVATION_NOTIFICATION)
                 .build());
 
         emailService.sendIncomingReservationEmail(
                 owner.email(),
-                owner.userDetails().firstName() + " " + owner.userDetails().lastName(),
+                ownerName,
                 restaurantName,
-                customer.userDetails().firstName() + " " + customer.userDetails().lastName(),
+                customerName,
                 formattedTime,
                 message.id()
         );
@@ -113,7 +140,7 @@ public class NotificationsConsumer {
         RestaurantResponse restaurantResponse = restaurantClient.getRestaurant(message.restaurantId()).get();
         List<UserResponse> users = userClient.getUsersByFavoritedRestaurant(String.valueOf(message.restaurantId()));
 
-        String restaurantName = restaurantResponse.name();
+        String restaurantName = restaurantResponse.getName();
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm dd-MM");
         String startDate = message.startDate().format(formatter);
@@ -149,9 +176,8 @@ public class NotificationsConsumer {
                         interactingUser.userDetails().firstName(),
                         interactingUser.userDetails().lastName(),
                         message.interactionType().getTemplatePhrase(),
-                        message.replyText()             //reminder: this is very inefficient because it repeats
-                )).build());                            //information stored in reviews table. may need to
-                                                        //change the structure of review table, like adding
-                                                        //children (reviews) column to review
+                        message.replyText()
+                )).build());
+
     }
 }

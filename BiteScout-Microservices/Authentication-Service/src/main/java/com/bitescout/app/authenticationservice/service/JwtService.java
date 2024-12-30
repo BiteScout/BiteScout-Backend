@@ -18,12 +18,21 @@ import java.util.Map;
 public class JwtService {
     private final CustomUserDetailsService customUserDetailsService;
     public static final String SECRET = "5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437";
-
     public String generateToken(String username) {
         UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
+
+        if (!(userDetails instanceof CustomUserDetails)) {
+            throw new IllegalStateException("UserDetails is not an instance of CustomUserDetails");
+        }
+
+        CustomUserDetails customUserDetails = (CustomUserDetails) userDetails;
+
         Map<String, Object> claims = new HashMap<>();
-        return createToken(claims, userDetails);
+        claims.put("roles", customUserDetails.getAuthorities());
+        claims.put("User-id", customUserDetails.getUserId()); // Add user-id to the claims
+        return createToken(claims, customUserDetails);
     }
+
 
     private String createToken(Map<String, Object> claims, UserDetails userDetails) {
         return Jwts.builder()

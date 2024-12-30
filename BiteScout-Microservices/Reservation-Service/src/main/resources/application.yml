@@ -3,3 +3,17 @@ spring:
     import: optional:configserver:http://localhost:8888
   application:
     name: reservation-service
+
+spring:
+  application:
+    name: reservation-service # Servis adı
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://127.0.0.1:5432/reservation_service_db
+    username: postgres
+    password: 1234
+  jpa:
+    hibernate:
+      ddl-auto: validate # Sadece mevcut tabloyu kontrol eder
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect

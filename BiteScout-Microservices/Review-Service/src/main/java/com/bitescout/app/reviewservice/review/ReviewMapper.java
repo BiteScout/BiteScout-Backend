@@ -12,7 +12,7 @@ public class ReviewMapper {
                 review.getCreatedAt(), review.getUpdatedAt());
     }
 
-    public Review toReview(ReviewRequest reviewRequest, Long userId){
+    public Review toReview(ReviewRequest reviewRequest, String userId){
         if(reviewRequest ==null){
             throw new NullPointerException("reviewRequest is null");
         }

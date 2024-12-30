@@ -1,6 +1,7 @@
 package com.bitescout.app.notificationservice.user;
 
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -19,4 +20,7 @@ public interface UserClient {
 
     @GetMapping("/{user-id}")
     public Optional<UserResponse> getUser(@PathVariable("user-id") String userId);
+
+    @GetMapping("/getUserByUsername/{username}")
+    public Optional<UserAuthDTO> getUserByUsername(@PathVariable String username);
 }
