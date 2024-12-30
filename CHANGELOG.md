@@ -1,6 +1,21 @@
 # CHANGELOG
 
 All the changes and updates documented in this file.
+
+---
+
+## [0.10.0] - 2024-12-28
+
+### Added
+
+- Functionality for review, reservation and notification services extracting user id from the jwt and using it as a parameter automatically.
+- Endpoint for deleting review interactions and getting a review's all interactions in the form of a like-dislike count and a list of text interactions.
+
+### Fixed
+- Email in notification not parsing the variables passed.
+- Restaurant client not being able to parse Point type in notification service.
+- Notification email displaying wrong date.
+
 ---
 
 ## [0.9.0] - 2024-12-26
