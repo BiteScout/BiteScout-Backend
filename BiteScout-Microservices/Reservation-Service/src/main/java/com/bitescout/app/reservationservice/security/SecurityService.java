@@ -2,6 +2,7 @@ package com.bitescout.app.reservationservice.security;
 
 
 
+import com.bitescout.app.reservationservice.exception.ReservationNotFoundException;
 import com.bitescout.app.reservationservice.reservation.Reservation;
 import com.bitescout.app.reservationservice.reservation.ReservationRepository;
 import com.bitescout.app.reservationservice.restaurant.RestaurantClient;
@@ -75,7 +76,7 @@ public class SecurityService {
                 .orElseThrow(() -> new IllegalArgumentException("User not found for principal: " + principal));
         // Fetch reservation based on ID
         Reservation reservation = reservationRepository.findById(reservationId)
-                .orElseThrow(() -> new IllegalArgumentException("Reservation not found for ID: " + reservationId));
+                .orElseThrow(() -> new ReservationNotFoundException("Reservation not found for ID: " + reservationId));
 
         // Fetch restaurants for the reservation and the user's ownership
         RestaurantResponse reservationRestaurants = restaurantClient.getRestaurant(reservation.getRestaurantId());
@@ -102,7 +103,7 @@ public class SecurityService {
                 .orElseThrow(() -> new IllegalArgumentException("User not found for principal: " + principal));
         // Fetch reservation based on ID
         Reservation reservation = reservationRepository.findById(reservationId)
-                .orElseThrow(() -> new IllegalArgumentException("Reservation not found for ID: " + reservationId));
+                .orElseThrow(() -> new ReservationNotFoundException("Reservation not found for ID: " + reservationId));
 
         // Check if the user is the owner of the reservation
         return reservation.getCustomerId().trim().equalsIgnoreCase(user.id().trim());
