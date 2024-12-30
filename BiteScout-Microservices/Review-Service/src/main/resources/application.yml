@@ -3,3 +3,12 @@ spring:
     import: optional:configserver:http://localhost:8888
   application:
     name: review-service
+
+spring:
+  data:
+    mongodb:
+      host: localhost # MongoDB'nin çalıştığı host
+      port: 27017     # MongoDB'nin varsayılan portu
+      database: review_service_db # Veritabanı adı
+  application:
+    name: review-service
