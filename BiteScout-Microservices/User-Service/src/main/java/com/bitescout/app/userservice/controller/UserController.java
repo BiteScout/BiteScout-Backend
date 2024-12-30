@@ -34,6 +34,11 @@ public class UserController {
         return ResponseEntity.ok(userService.getUserByUsername(username));
     }
 
+    @GetMapping("/getUserId/{username}")
+    public ResponseEntity<String> getUserId(@PathVariable String username) {
+        return ResponseEntity.ok(userService.getUserId(username));
+    }
+
     @PutMapping("/enable-user/{userId}")
     public ResponseEntity<Boolean> enableUser(@PathVariable String userId) {
         return ResponseEntity.ok(userService.enableUser(userId));
@@ -94,6 +99,12 @@ public class UserController {
     @GetMapping("/favoriteCount/{restaurantId}")
     public ResponseEntity<Long> countFavorites(@PathVariable String restaurantId) {
         return ResponseEntity.ok(userService.countFavorites(restaurantId));
+    }
+
+    @DeleteMapping("/deleteAllFavorites/{userId}")
+    public ResponseEntity<Void> deleteAllFavoritesByUserId(@PathVariable String userId) {
+        userService.deleteAllFavoritesByUserId(userId);
+        return ResponseEntity.noContent().build();
     }
 
 

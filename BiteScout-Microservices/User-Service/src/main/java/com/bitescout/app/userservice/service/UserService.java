@@ -6,6 +6,7 @@ import com.bitescout.app.userservice.entity.User;
 import com.bitescout.app.userservice.entity.UserDetails;
 import com.bitescout.app.userservice.repository.FavoriteRepository;
 import com.bitescout.app.userservice.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
@@ -121,6 +122,12 @@ public class UserService {
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
         return modelMapper.map(user, UserDTO.class);
     }
+
+    public String getUserId(String username) {
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
+        return user.getId().toString();
+    }
+
     public void deleteUser(String userId) {
         User user = userRepository.findById(UUID.fromString(userId)).orElseThrow(() -> new RuntimeException("User not found"));
         userRepository.delete(user);
@@ -164,6 +171,12 @@ public class UserService {
 
     public Long countFavorites(String restaurantId) {
         return favoriteRepository.countByRestaurantId(UUID.fromString(restaurantId));
+    }
+
+    @Transactional
+    public void deleteAllFavoritesByUserId(String userId) {
+        User user = userRepository.findById(UUID.fromString(userId)).orElseThrow(() -> new RuntimeException("User not found"));
+        favoriteRepository.deleteAllByUser(user);
     }
 
     private FavoriteResponseDTO mapToFavoriteResponseDTO(Favorite favorite) {
