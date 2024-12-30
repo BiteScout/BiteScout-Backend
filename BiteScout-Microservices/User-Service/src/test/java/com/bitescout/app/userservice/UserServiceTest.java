@@ -1,5 +1,6 @@
 package com.bitescout.app.userservice;
 
+import com.bitescout.app.userservice.client.AuthClient;
 import com.bitescout.app.userservice.dto.*;
 import com.bitescout.app.userservice.entity.Role;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,6 +26,9 @@ public class UserServiceTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private AuthClient authClient;
+
     // TC-01: Create a user with valid data
     @Test
     public void createUser_ValidData_ShouldReturn201() throws Exception {
@@ -42,7 +46,7 @@ public class UserServiceTest {
                 .andExpect(jsonPath("$.username").value("testuser"));
 
         // Cleanup
-        String token = "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6W3siYXV0aG9yaXR5IjoiUk9MRV9BRE1JTiJ9XSwiVXNlci1pZCI6IjRiOGU2ZGI4LTJiOWUtNDIwNC04NWU4LWZmMGJkMDgyYjlkNyIsInN1YiI6ImFkbWludXNlcmJlc3QyIiwiaXNzIjoiUk9MRV9BRE1JTiIsImlhdCI6MTczNTU4MzQ4MywiZXhwIjoxNzM1NTg3MDgzfQ.gRQRpDi_j7wcZe_wvlFIZT_NTSfDud4muISYpHozdBI";
+        String token = authClient.login("admin", "$2a$10$2529eBq3R6Y41t03Mku2I.2Nh3W0p25lt.s.85mG0kiAvxI4bsAHa");
         mockMvc.perform(delete("/v1/users/username/{username}", "testuser")
                 .header("Authorization", "Bearer " + token));
     }
@@ -88,7 +92,7 @@ public class UserServiceTest {
                 .andExpect(jsonPath("$.username").value("testuser"));
 
         // Cleanup
-        String token = "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6W3siYXV0aG9yaXR5IjoiUk9MRV9BRE1JTiJ9XSwiVXNlci1pZCI6IjRiOGU2ZGI4LTJiOWUtNDIwNC04NWU4LWZmMGJkMDgyYjlkNyIsInN1YiI6ImFkbWludXNlcmJlc3QyIiwiaXNzIjoiUk9MRV9BRE1JTiIsImlhdCI6MTczNTU4MzQ4MywiZXhwIjoxNzM1NTg3MDgzfQ.gRQRpDi_j7wcZe_wvlFIZT_NTSfDud4muISYpHozdBI";
+        String token = authClient.login("admin", "$2a$10$2529eBq3R6Y41t03Mku2I.2Nh3W0p25lt.s.85mG0kiAvxI4bsAHa");
         mockMvc.perform(delete("/v1/users/username/{username}", "testuser")
                 .header("Authorization", "Bearer " + token));
 
@@ -97,8 +101,7 @@ public class UserServiceTest {
     // TC-04: Update a user with valid inputs including a profile picture
     @Test
     public void updateUser_ValidInputs_ShouldReturn200() throws Exception {
-        String token = "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6W3siYXV0aG9yaXR5IjoiUk9MRV9BRE1JTiJ9XSwiVXNlci1pZCI6IjRiOGU2ZGI4LTJiOWUtNDIwNC04NWU4LWZmMGJkMDgyYjlkNyIsInN1YiI6ImFkbWludXNlcmJlc3QyIiwiaXNzIjoiUk9MRV9BRE1JTiIsImlhdCI6MTczNTU4MzQ4MywiZXhwIjoxNzM1NTg3MDgzfQ.gRQRpDi_j7wcZe_wvlFIZT_NTSfDud4muISYpHozdBI";
-
+        String token = authClient.login("admin", "$2a$10$2529eBq3R6Y41t03Mku2I.2Nh3W0p25lt.s.85mG0kiAvxI4bsAHa");
         RegisterRequestDTO request = RegisterRequestDTO.builder()
                 .username("testuser")
                 .password("Test1234")
@@ -140,8 +143,7 @@ public class UserServiceTest {
     @Test
     public void updateUser_InvalidInputs_ShouldReturn401() throws Exception {
         String token = "wrong token";
-        String correctToken = "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6W3siYXV0aG9yaXR5IjoiUk9MRV9BRE1JTiJ9XSwiVXNlci1pZCI6IjRiOGU2ZGI4LTJiOWUtNDIwNC04NWU4LWZmMGJkMDgyYjlkNyIsInN1YiI6ImFkbWludXNlcmJlc3QyIiwiaXNzIjoiUk9MRV9BRE1JTiIsImlhdCI6MTczNTU4MzQ4MywiZXhwIjoxNzM1NTg3MDgzfQ.gRQRpDi_j7wcZe_wvlFIZT_NTSfDud4muISYpHozdBI";
-
+        String correctToken = authClient.login("admin", "$2a$10$2529eBq3R6Y41t03Mku2I.2Nh3W0p25lt.s.85mG0kiAvxI4bsAHa");
         RegisterRequestDTO request = RegisterRequestDTO.builder()
                 .username("testuser")
                 .password("Test1234")
@@ -181,8 +183,7 @@ public class UserServiceTest {
     @Test
     public void addFavorite_ValidData_ShouldReturn201() throws Exception {
         // Create a user to add a favorite
-        String correctToken = "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6W3siYXV0aG9yaXR5IjoiUk9MRV9BRE1JTiJ9XSwiVXNlci1pZCI6IjRiOGU2ZGI4LTJiOWUtNDIwNC04NWU4LWZmMGJkMDgyYjlkNyIsInN1YiI6ImFkbWludXNlcmJlc3QyIiwiaXNzIjoiUk9MRV9BRE1JTiIsImlhdCI6MTczNTU4MzQ4MywiZXhwIjoxNzM1NTg3MDgzfQ.gRQRpDi_j7wcZe_wvlFIZT_NTSfDud4muISYpHozdBI";
-
+        String correctToken = authClient.login("admin", "$2a$10$2529eBq3R6Y41t03Mku2I.2Nh3W0p25lt.s.85mG0kiAvxI4bsAHa");
         RegisterRequestDTO request = RegisterRequestDTO.builder()
                 .username("testuser")
                 .password("Test1234")
@@ -219,8 +220,7 @@ public class UserServiceTest {
     public void getFavorites_ValidUserId_ShouldReturn200() throws Exception {
 
         // Create a user to add a favorite first
-        String correctToken = "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6W3siYXV0aG9yaXR5IjoiUk9MRV9BRE1JTiJ9XSwiVXNlci1pZCI6IjRiOGU2ZGI4LTJiOWUtNDIwNC04NWU4LWZmMGJkMDgyYjlkNyIsInN1YiI6ImFkbWludXNlcmJlc3QyIiwiaXNzIjoiUk9MRV9BRE1JTiIsImlhdCI6MTczNTU4MzQ4MywiZXhwIjoxNzM1NTg3MDgzfQ.gRQRpDi_j7wcZe_wvlFIZT_NTSfDud4muISYpHozdBI";
-
+        String correctToken = authClient.login("admin", "$2a$10$2529eBq3R6Y41t03Mku2I.2Nh3W0p25lt.s.85mG0kiAvxI4bsAHa");
         RegisterRequestDTO request = RegisterRequestDTO.builder()
                 .username("testuser")
                 .password("Test1234")
@@ -272,8 +272,7 @@ public class UserServiceTest {
     @Test
     public void deleteFavorite_ValidData_ShouldReturn204() throws Exception {
         // Create a user to add a favorite
-        String correctToken = "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6W3siYXV0aG9yaXR5IjoiUk9MRV9BRE1JTiJ9XSwiVXNlci1pZCI6IjRiOGU2ZGI4LTJiOWUtNDIwNC04NWU4LWZmMGJkMDgyYjlkNyIsInN1YiI6ImFkbWludXNlcmJlc3QyIiwiaXNzIjoiUk9MRV9BRE1JTiIsImlhdCI6MTczNTU4MzQ4MywiZXhwIjoxNzM1NTg3MDgzfQ.gRQRpDi_j7wcZe_wvlFIZT_NTSfDud4muISYpHozdBI";
-
+        String correctToken = authClient.login("admin", "$2a$10$2529eBq3R6Y41t03Mku2I.2Nh3W0p25lt.s.85mG0kiAvxI4bsAHa");
         RegisterRequestDTO request = RegisterRequestDTO.builder()
                 .username("testuser")
                 .password("Test1234")
@@ -315,8 +314,7 @@ public class UserServiceTest {
     @Test
     public void countFavorites_ValidRestaurantId_ShouldReturn200() throws Exception {
         // Create a user to add a favorite first
-        String correctToken = "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6W3siYXV0aG9yaXR5IjoiUk9MRV9BRE1JTiJ9XSwiVXNlci1pZCI6IjRiOGU2ZGI4LTJiOWUtNDIwNC04NWU4LWZmMGJkMDgyYjlkNyIsInN1YiI6ImFkbWludXNlcmJlc3QyIiwiaXNzIjoiUk9MRV9BRE1JTiIsImlhdCI6MTczNTU4MzQ4MywiZXhwIjoxNzM1NTg3MDgzfQ.gRQRpDi_j7wcZe_wvlFIZT_NTSfDud4muISYpHozdBI";
-
+        String correctToken = authClient.login("admin", "$2a$10$2529eBq3R6Y41t03Mku2I.2Nh3W0p25lt.s.85mG0kiAvxI4bsAHa");
         RegisterRequestDTO request1 = RegisterRequestDTO.builder()
                 .username("user111")
                 .password("User1Pass")
@@ -376,8 +374,7 @@ public class UserServiceTest {
     // TC-10: Enable a user account
     @Test
     public void enableUser_ValidUserId_ShouldReturn200() throws Exception {
-        String token = "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6W3siYXV0aG9yaXR5IjoiUk9MRV9BRE1JTiJ9XSwiVXNlci1pZCI6IjRiOGU2ZGI4LTJiOWUtNDIwNC04NWU4LWZmMGJkMDgyYjlkNyIsInN1YiI6ImFkbWludXNlcmJlc3QyIiwiaXNzIjoiUk9MRV9BRE1JTiIsImlhdCI6MTczNTU4MzQ4MywiZXhwIjoxNzM1NTg3MDgzfQ.gRQRpDi_j7wcZe_wvlFIZT_NTSfDud4muISYpHozdBI";
-
+        String token = authClient.login("admin", "$2a$10$2529eBq3R6Y41t03Mku2I.2Nh3W0p25lt.s.85mG0kiAvxI4bsAHa");
         // Create a user to enable
         RegisterRequestDTO request = RegisterRequestDTO.builder()
                 .username("testuser")
@@ -431,7 +428,7 @@ public class UserServiceTest {
                 .andExpect(status().isUnauthorized());
 
         // Cleanup
-        String token = "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6W3siYXV0aG9yaXR5IjoiUk9MRV9BRE1JTiJ9XSwiVXNlci1pZCI6IjRiOGU2ZGI4LTJiOWUtNDIwNC04NWU4LWZmMGJkMDgyYjlkNyIsInN1YiI6ImFkbWludXNlcmJlc3QyIiwiaXNzIjoiUk9MRV9BRE1JTiIsImlhdCI6MTczNTU4MzQ4MywiZXhwIjoxNzM1NTg3MDgzfQ.gRQRpDi_j7wcZe_wvlFIZT_NTSfDud4muISYpHozdBI";
+        String token = authClient.login("admin", "$2a$10$2529eBq3R6Y41t03Mku2I.2Nh3W0p25lt.s.85mG0kiAvxI4bsAHa");
         mockMvc.perform(delete("/v1/users/username/{username}", "testuser")
                 .header("Authorization", "Bearer " + token));
     }
@@ -451,7 +448,7 @@ public class UserServiceTest {
                 .content(objectMapper.writeValueAsString(request)));
 
         // Cleanup and test with admin token
-        String token = "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6W3siYXV0aG9yaXR5IjoiUk9MRV9BRE1JTiJ9XSwiVXNlci1pZCI6IjRiOGU2ZGI4LTJiOWUtNDIwNC04NWU4LWZmMGJkMDgyYjlkNyIsInN1YiI6ImFkbWludXNlcmJlc3QyIiwiaXNzIjoiUk9MRV9BRE1JTiIsImlhdCI6MTczNTU4MzQ4MywiZXhwIjoxNzM1NTg3MDgzfQ.gRQRpDi_j7wcZe_wvlFIZT_NTSfDud4muISYpHozdBI";
+        String token = authClient.login("admin", "$2a$10$2529eBq3R6Y41t03Mku2I.2Nh3W0p25lt.s.85mG0kiAvxI4bsAHa");
         String userId = mockMvc.perform(get("/v1/users/getUserId/{username}", "testuser"))
                 .andReturn().getResponse().getContentAsString();
 
@@ -463,7 +460,7 @@ public class UserServiceTest {
     // TC-13: Retrieve all users as an admin
     @Test
     public void getAllUsers_AdminAuthenticated_ShouldReturn200() throws Exception {
-        String token = "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6W3siYXV0aG9yaXR5IjoiUk9MRV9BRE1JTiJ9XSwiVXNlci1pZCI6IjRiOGU2ZGI4LTJiOWUtNDIwNC04NWU4LWZmMGJkMDgyYjlkNyIsInN1YiI6ImFkbWludXNlcmJlc3QyIiwiaXNzIjoiUk9MRV9BRE1JTiIsImlhdCI6MTczNTU4MzQ4MywiZXhwIjoxNzM1NTg3MDgzfQ.gRQRpDi_j7wcZe_wvlFIZT_NTSfDud4muISYpHozdBI";
+        String token = authClient.login("admin", "$2a$10$2529eBq3R6Y41t03Mku2I.2Nh3W0p25lt.s.85mG0kiAvxI4bsAHa");
         //create 2 users
         RegisterRequestDTO request = RegisterRequestDTO.builder()
                 .username("testuser")
@@ -519,7 +516,7 @@ public class UserServiceTest {
     // TC-15: Retrieve user information by username
     @Test
     public void getUserByUsername_ValidUsername_ShouldReturn200() throws Exception {
-        String token = "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6W3siYXV0aG9yaXR5IjoiUk9MRV9BRE1JTiJ9XSwiVXNlci1pZCI6IjRiOGU2ZGI4LTJiOWUtNDIwNC04NWU4LWZmMGJkMDgyYjlkNyIsInN1YiI6ImFkbWludXNlcmJlc3QyIiwiaXNzIjoiUk9MRV9BRE1JTiIsImlhdCI6MTczNTU4MzQ4MywiZXhwIjoxNzM1NTg3MDgzfQ.gRQRpDi_j7wcZe_wvlFIZT_NTSfDud4muISYpHozdBI";
+        String token = authClient.login("admin", "$2a$10$2529eBq3R6Y41t03Mku2I.2Nh3W0p25lt.s.85mG0kiAvxI4bsAHa");
         //create a user
         RegisterRequestDTO request = RegisterRequestDTO.builder()
                 .username("testuser")
@@ -547,8 +544,7 @@ public class UserServiceTest {
     // TC-16: Attempt to delete a user by username by a non-admin (not matching principal)
     @Test
     public void deleteUserByUsername_NonAdminNotMatchingUser_ShouldReturn401() throws Exception {
-        String correctToken = "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6W3siYXV0aG9yaXR5IjoiUk9MRV9BRE1JTiJ9XSwiVXNlci1pZCI6IjRiOGU2ZGI4LTJiOWUtNDIwNC04NWU4LWZmMGJkMDgyYjlkNyIsInN1YiI6ImFkbWludXNlcmJlc3QyIiwiaXNzIjoiUk9MRV9BRE1JTiIsImlhdCI6MTczNTU4MzQ4MywiZXhwIjoxNzM1NTg3MDgzfQ.gRQRpDi_j7wcZe_wvlFIZT_NTSfDud4muISYpHozdBI";
-
+        String correctToken = authClient.login("admin", "$2a$10$2529eBq3R6Y41t03Mku2I.2Nh3W0p25lt.s.85mG0kiAvxI4bsAHa");
         RegisterRequestDTO request = RegisterRequestDTO.builder()
                 .username("testuser")
                 .password("Test1234")
@@ -575,8 +571,7 @@ public class UserServiceTest {
     // TC-17: Create a user with an already existing email
     @Test
     public void createUser_ExistingEmail_ShouldReturn400() throws Exception {
-        String correctToken = "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6W3siYXV0aG9yaXR5IjoiUk9MRV9BRE1JTiJ9XSwiVXNlci1pZCI6IjRiOGU2ZGI4LTJiOWUtNDIwNC04NWU4LWZmMGJkMDgyYjlkNyIsInN1YiI6ImFkbWludXNlcmJlc3QyIiwiaXNzIjoiUk9MRV9BRE1JTiIsImlhdCI6MTczNTU4MzQ4MywiZXhwIjoxNzM1NTg3MDgzfQ.gRQRpDi_j7wcZe_wvlFIZT_NTSfDud4muISYpHozdBI";
-
+        String correctToken = authClient.login("admin", "$2a$10$2529eBq3R6Y41t03Mku2I.2Nh3W0p25lt.s.85mG0kiAvxI4bsAHa");
         RegisterRequestDTO request1 = RegisterRequestDTO.builder()
                 .username("newuser")
                 .password("Test1234")
@@ -620,7 +615,7 @@ public class UserServiceTest {
                 .content(objectMapper.writeValueAsString(request)));
 
         // Cleanup and test with admin token
-        String token = "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6W3siYXV0aG9yaXR5IjoiUk9MRV9BRE1JTiJ9XSwiVXNlci1pZCI6IjRiOGU2ZGI4LTJiOWUtNDIwNC04NWU4LWZmMGJkMDgyYjlkNyIsInN1YiI6ImFkbWludXNlcmJlc3QyIiwiaXNzIjoiUk9MRV9BRE1JTiIsImlhdCI6MTczNTU4MzQ4MywiZXhwIjoxNzM1NTg3MDgzfQ.gRQRpDi_j7wcZe_wvlFIZT_NTSfDud4muISYpHozdBI";
+        String token = authClient.login("admin", "$2a$10$2529eBq3R6Y41t03Mku2I.2Nh3W0p25lt.s.85mG0kiAvxI4bsAHa");
         mockMvc.perform(delete("/v1/users/username/{username}", "testuser")
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk());
@@ -630,6 +625,7 @@ public class UserServiceTest {
     @Test
     public void getAllUsers_NonAdmin_ShouldReturn401() throws Exception {
         String token = "non_admin_token (guest)";
+        String correctToken = authClient.login("admin", "$2a$10$2529eBq3R6Y41t03Mku2I.2Nh3W0p25lt.s.85mG0kiAvxI4bsAHa");
         //create 2 users
         RegisterRequestDTO request = RegisterRequestDTO.builder()
                 .username("testuser")
@@ -658,9 +654,9 @@ public class UserServiceTest {
 
         // Cleanup
         mockMvc.perform(delete("/v1/users/username/{username}", "testuser")
-                .header("Authorization", "Bearer " + token));
+                .header("Authorization", "Bearer " + correctToken));
 
         mockMvc.perform(delete("/v1/users/username/{username}", "testuser2")
-                .header("Authorization", "Bearer " + token));
+                .header("Authorization", "Bearer " + correctToken));
     }
 }
