@@ -70,7 +70,7 @@ public class ReviewService {
     public void deleteReviewInteraction(String reviewInteractionId, String customerId) {
         var reviewInteraction = reviewInteractionRepository.findByIdAndInteractingUserId(reviewInteractionId, customerId).orElseThrow(() ->
                 new BadRequestException("Review interaction not found"));
-        repository.deleteById(reviewInteractionId);
+        reviewInteractionRepository.deleteById(reviewInteractionId);//interaction ı reviewInteraction repo dan silmeli
     }
 
     public int getLikeCountOfReview(String reviewId) {
