@@ -621,7 +621,7 @@ public class UserServiceTest {
                 .andExpect(status().isOk());
     }
 
-    // TC-21: Retrieve all users as a non-admin
+    // TC-19: Retrieve all users as a non-admin
     @Test
     public void getAllUsers_NonAdmin_ShouldReturn401() throws Exception {
         String token = "non_admin_token (guest)";

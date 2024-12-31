@@ -10,5 +10,7 @@ import java.util.UUID;
 @Repository
 public interface SpecialOfferRepository extends JpaRepository<SpecialOffer, UUID> {
     List<SpecialOffer> findAllByRestaurantId(UUID restaurantId);
+
+    SpecialOffer findByRestaurant_NameAndTitle(String restaurantName, String title);
 }
 
