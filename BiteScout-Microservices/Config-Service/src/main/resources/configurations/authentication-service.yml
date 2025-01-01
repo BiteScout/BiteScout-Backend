@@ -14,5 +14,4 @@ spring:
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
 
-auth-service:
-  url: http://localhost:8222/v1/auth/verify
+
