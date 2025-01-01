@@ -191,6 +191,11 @@ public class UserService {
     }
 
 
+    public Boolean isEnabled(String userId) {
+        User user = userRepository.findById(UUID.fromString(userId)).orElseThrow(() -> new RuntimeException("User not found"));
+        return user.isEnabled();
+    }
+
     // FAVORITE SERVICES //
 
     public FavoriteResponseDTO addFavorite(String userId, String restaurantId) {

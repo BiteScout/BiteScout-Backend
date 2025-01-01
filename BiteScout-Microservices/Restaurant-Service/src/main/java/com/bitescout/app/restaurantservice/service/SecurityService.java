@@ -24,6 +24,9 @@ public class SecurityService {
         return false;
     }
 
+    public boolean isEnabled(String userId) {
+        return Boolean.TRUE.equals(userServiceClient.isEnabled(userId).getBody());
+    }
 
     public String getRestaurantOwnerUsername(String ownerId) {
         try {
