@@ -2,6 +2,16 @@
 
 All the changes and updates documented in this file.
 
+## [0.9.2] - 2024-12-31
+
+### Added
+
+- Security configurations and authorization, authentication are completely done including relationships with other services.
+- Tests are added for restaurant and user service, added related clients and new endpoints.
+- Exceptions are handled in restaurant service.
+
+### Fixed
+- Subtle endpoint fixes.
 ---
 ## [0.10.2] 2024-12-31
 
@@ -13,7 +23,7 @@ All the changes and updates documented in this file.
 
 - Review service delete interaction operation from wrong repository
 
-## [0.10.0] - 2024-12-28
+## [0.9.1] - 2024-12-28
 
 ### Added
 
