@@ -48,10 +48,8 @@ public class RankingService {
             // Handle this case appropriately, e.g., return a default value or throw an exception
             return 0.0;
         }
-
         // Safe to access ranking methods now
-        return ranking.getAverageRating() * ranking.getTotalReviews();
-    }
+        return ranking.getAverageRating() * Math.log1p(ranking.getTotalReviews());    }
 
     public void submitRestaurantRating() {
         List<RestaurantDto> restaurants = restaurantClient.getRestaurants().getBody();

@@ -6,6 +6,7 @@ import com.bitescout.app.userservice.entity.User;
 import com.bitescout.app.userservice.entity.UserDetails;
 import com.bitescout.app.userservice.repository.FavoriteRepository;
 import com.bitescout.app.userservice.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +18,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -73,16 +76,8 @@ public class UserService {
         return modelMapper.map(user, UserDTO.class);
     }
 
-    private UserDetails updateUserDetails(UserDetails toUpdate, UserUpdateRequestDTO request, MultipartFile file) {
+    private UserDetails updateUserDetails(UserDetails toUpdate, UserUpdateRequestDTO request) {
         toUpdate = toUpdate == null ? new UserDetails() : toUpdate;
-
-        if (file != null) {
-            String profilePicture = uploadImageToFileSystem(file);
-            if (profilePicture != null) {
-                deleteImageFromFileSystem(toUpdate.getProfilePicture());
-                toUpdate.setProfilePicture(profilePicture);
-            }
-        }
 
         // Set fields from the updated request
         toUpdate.setFirstName(request.getFirstName());
@@ -95,14 +90,67 @@ public class UserService {
 
         return toUpdate;
     }
+    public String updateUserPicture(String userId, MultipartFile profilePicture) throws IOException {
+        // Retrieve the user by userId
+        User user = userRepository.findById(UUID.fromString(userId))
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Save the profile picture to a storage location (e.g., file system, cloud storage)
+        String profilePictureUrl = saveProfilePicture(profilePicture);
+
+        // Update the user's profile picture URL
+        user.setProfilePicture(profilePictureUrl);
+        userRepository.save(user);
+
+        // Convert the updated user entity to a UserDTO and return it
+        return profilePictureUrl;
+    }
+
+    private String saveProfilePicture(MultipartFile image) {
+        if (image == null || image.isEmpty()) {
+            throw new IllegalArgumentException("Profile picture must not be null or empty");
+        }
+
+        ByteArrayResource fileResource;
+        try {
+            fileResource = new ByteArrayResource(image.getBytes()) {
+                @Override
+                public String getFilename() {
+                    return image.getOriginalFilename(); // Return the original filename
+                }
+            };
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to read file bytes", e);
+        }
+
+        // Set headers for the multipart request
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+
+        // Prepare the body as part of a multipart request
+        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+        body.add("image", fileResource);
+
+        // Create HttpEntity
+        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+
+        // Send POST request
+        ResponseEntity<String> response = restTemplate.postForEntity(
+                fileStorageServiceUrl + "/upload",
+                requestEntity,
+                String.class
+        );
+
+        return response.getBody();
+    }
 
 
-    public UserDTO updateUser(UserUpdateRequestDTO request, MultipartFile profilePicture) {
+    public UserDTO updateUser(UserUpdateRequestDTO request) {
         User user = userRepository.findById(UUID.fromString(request.getId()))
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         // Update UserDetails
-        user.setUserDetails(updateUserDetails(user.getUserDetails(), request, profilePicture));
+        user.setUserDetails(updateUserDetails(user.getUserDetails(), request));
 
         // Map other fields from the request to the User entity
         if (request.getUsername() != null) {
@@ -121,6 +169,12 @@ public class UserService {
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
         return modelMapper.map(user, UserDTO.class);
     }
+
+    public String getUserId(String username) {
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
+        return user.getId().toString();
+    }
+
     public void deleteUser(String userId) {
         User user = userRepository.findById(UUID.fromString(userId)).orElseThrow(() -> new RuntimeException("User not found"));
         userRepository.delete(user);
@@ -136,6 +190,11 @@ public class UserService {
         return users.stream().map(user -> modelMapper.map(user, UserDTO.class)).collect(Collectors.toList());
     }
 
+
+    public Boolean isEnabled(String userId) {
+        User user = userRepository.findById(UUID.fromString(userId)).orElseThrow(() -> new RuntimeException("User not found"));
+        return user.isEnabled();
+    }
 
     // FAVORITE SERVICES //
 
@@ -164,6 +223,12 @@ public class UserService {
 
     public Long countFavorites(String restaurantId) {
         return favoriteRepository.countByRestaurantId(UUID.fromString(restaurantId));
+    }
+
+    @Transactional
+    public void deleteAllFavoritesByUserId(String userId) {
+        User user = userRepository.findById(UUID.fromString(userId)).orElseThrow(() -> new RuntimeException("User not found"));
+        favoriteRepository.deleteAllByUser(user);
     }
 
     private FavoriteResponseDTO mapToFavoriteResponseDTO(Favorite favorite) {

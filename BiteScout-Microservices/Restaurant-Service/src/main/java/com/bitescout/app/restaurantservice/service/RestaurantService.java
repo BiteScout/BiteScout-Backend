@@ -89,8 +89,16 @@ public class RestaurantService {
                 .collect(Collectors.toList());
     }
 
+    public String getRestaurantIdByName(String restaurantName) {
+        return restaurantRepository.findByName(restaurantName).getId().toString();
+    }
+
     public void deleteRestaurant(String restaurantId) {
         restaurantRepository.deleteById(UUID.fromString(restaurantId));
+    }
+
+    public void deleteAllRestaurants() {
+        restaurantRepository.deleteAll();
     }
 
     public RestaurantResponseDTO updateMenu(String restaurantId, String menu) {

@@ -33,6 +33,7 @@ public class UserServiceApplication implements CommandLineRunner {
                 .username("admin")
                 .email("admin@gmail.com")
                 .password(pass)
+                .enabled(true)
                 .role(Role.ADMIN).build();
         if (userRepository.findByUsername("admin").isEmpty()) userRepository.save(admin);
     }
