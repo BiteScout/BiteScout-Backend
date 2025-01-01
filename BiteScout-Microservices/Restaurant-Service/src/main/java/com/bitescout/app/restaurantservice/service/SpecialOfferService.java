@@ -58,4 +58,12 @@ public class SpecialOfferService {
 
         specialOfferRepository.delete(specialOffer);
     }
+
+    public String getSpecialOfferIdByRestaurantNameAndTitle(String restaurantName, String title) {
+        return specialOfferRepository.findByRestaurant_NameAndTitle(restaurantName, title).getId().toString();
+    }
+
+    public void deleteAllSpecialOffers() {
+        specialOfferRepository.deleteAll();
+    }
 }

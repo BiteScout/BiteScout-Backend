@@ -70,6 +70,12 @@ public class RestaurantController {
         return ResponseEntity.ok(restaurantService.getRestaurantsByPriceRange(priceRange));
     }
 
+    @GetMapping("/getRestaurantId/{restaurantName}")
+    @PreAuthorize("hasRole('ADMIN') or (@securityService.getRestaurantOwnerUsername(@securityService.getRestaurantOwnerId(#restaurantId)) == principal and hasRole('RESTAURANT_OWNER'))")
+    public ResponseEntity<String> getRestaurantIdByName(@PathVariable String restaurantName) {
+        return ResponseEntity.ok(restaurantService.getRestaurantIdByName(restaurantName));
+    }
+
     @DeleteMapping("/{restaurantId}")
     @PreAuthorize("hasRole('ADMIN') or (@securityService.getRestaurantOwnerUsername(@securityService.getRestaurantOwnerId(#restaurantId)) == principal and hasRole('RESTAURANT_OWNER'))")
     public ResponseEntity<Void> deleteRestaurant(@PathVariable String restaurantId) {
@@ -80,6 +86,13 @@ public class RestaurantController {
     @PreAuthorize("hasRole('ADMIN') or (@securityService.getRestaurantOwnerUsername(@securityService.getRestaurantOwnerId(#restaurantId)) == principal and hasRole('RESTAURANT_OWNER'))")
     public ResponseEntity<RestaurantResponseDTO> updateMenu(@PathVariable String restaurantId, @RequestParam String menu) {
         return ResponseEntity.ok(restaurantService.updateMenu(restaurantId, menu));
+    }
+
+    @DeleteMapping("/deleteAllRestaurants")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> deleteAllRestaurants() {
+        restaurantService.deleteAllRestaurants();
+        return ResponseEntity.noContent().build();
     }
 
     // SPECIAL OFFER ENDPOINTS //
@@ -104,6 +117,19 @@ public class RestaurantController {
     @PreAuthorize("hasRole('ADMIN') or (@securityService.getRestaurantOwnerUsername(@securityService.getRestaurantOwnerId(#restaurantId)) == principal and hasRole('RESTAURANT_OWNER'))")
     public ResponseEntity<Void> deleteSpecialOffer(@PathVariable String restaurantId, @PathVariable String offerId) {
         specialOfferService.deleteSpecialOffer(restaurantId, offerId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/getOfferId/{restaurantName}/offers/{title}")
+    @PreAuthorize("hasRole('ADMIN') or (@securityService.getRestaurantOwnerUsername(@securityService.getRestaurantOwnerId(#restaurantId)) == principal and hasRole('RESTAURANT_OWNER'))")
+    public ResponseEntity<String> getSpecialOfferId(@PathVariable String restaurantName, @PathVariable String title) {
+        return ResponseEntity.ok(specialOfferService.getSpecialOfferIdByRestaurantNameAndTitle(restaurantName, title));
+    }
+
+    @DeleteMapping("/deleteAllOffers")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> deleteAllSpecialOffers() {
+        specialOfferService.deleteAllSpecialOffers();
         return ResponseEntity.noContent().build();
     }
 

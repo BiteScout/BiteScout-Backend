@@ -22,6 +22,7 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, UUID> {
             @Param("radius") double radiusInMeters
     );
     List<Restaurant> findByNameContainingIgnoreCase(String query);
+    Restaurant findByName(String name);
 
     List<Restaurant> findByCuisineTypeContainingIgnoreCase(String cuisineType);
     List<Restaurant> findByPriceRangeContainingIgnoreCase(String priceRange);
