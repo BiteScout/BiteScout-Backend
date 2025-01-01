@@ -1,6 +1,7 @@
 package com.bitescout.app.reviewservice.review;
 
 import com.bitescout.app.reviewservice.review.dto.*;
+import com.bitescout.app.reviewservice.review.exception.ReviewMissingFieldException;
 import com.bitescout.app.reviewservice.review.exception.ReviewNotFoundException;
 import jakarta.ws.rs.BadRequestException;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,7 +42,7 @@ class ReviewServiceTest {
         ReviewRequest reviewRequest = new ReviewRequest("r1", 3, "good");
         Review review = new Review("rev1", "r1", "c1", 3, "good", LocalDateTime.now(), LocalDateTime.now());
 
-        Mockito.when(reviewMapper.toReview(reviewRequest,"user1")).thenReturn(review);
+        Mockito.when(reviewMapper.toReview(reviewRequest,"c1")).thenReturn(review);
         Mockito.when(reviewRepository.save(review)).thenReturn(review);
         Mockito.when(reviewMapper.toReviewResponse(review))
                 .thenReturn(new ReviewResponse("rev1", "r1",
@@ -49,7 +50,7 @@ class ReviewServiceTest {
                         LocalDateTime.now(), LocalDateTime.now()));
 
 
-        ReviewResponse reviewResponse = reviewService.createReview(reviewRequest, "user1");
+        ReviewResponse reviewResponse = reviewService.createReview(reviewRequest, "c1");
 
         assertNotNull(reviewResponse);
         assertEquals(reviewResponse.comment(),reviewRequest.comment());
@@ -58,11 +59,21 @@ class ReviewServiceTest {
     }
 
     @Test
+    public void createReviewWithMissingFields() {
+        ReviewRequest reviewRequest = new ReviewRequest("r1", 3, "good");
+
+        var exp=assertThrows(ReviewMissingFieldException.class,
+                ()->reviewService.createReview(reviewRequest,""));
+        assertEquals(exp.getMessage(),"User ID and/or Restaurant ID cannot be empty");
+
+    }
+
+    @Test
     public void getReviewsTest() {
         LocalDateTime created = LocalDateTime.now();
         LocalDateTime updated = LocalDateTime.now();
         Review review = new Review("rev1", "r1", "c1", 3, "good", created, updated);
-        ReviewResponse expectedResponse = new ReviewResponse("rev1", "r1","c1",3,"good", created, updated);
+        ReviewResponse expectedResponse = new ReviewResponse("rev1", "r1","c1", 3,"good", created, updated);
 
         Mockito.when(reviewRepository.findByRestaurantId(review.getRestaurantId())).thenReturn(List.of(review));
         Mockito.when(reviewMapper.toReviewResponse(review))
@@ -171,7 +182,8 @@ class ReviewServiceTest {
 
         Mockito.when(reviewRepository.findById(reviewId)).thenReturn(Optional.empty());
 
-        assertThrows(ReviewNotFoundException.class, () -> reviewService.createReviewInteraction(request, userId));
+        var exp=assertThrows(ReviewNotFoundException.class, () -> reviewService.createReviewInteraction(request, userId));
+        assertEquals(exp.getMessage(),"Review not found");
     }
 
     @Test
@@ -233,6 +245,24 @@ class ReviewServiceTest {
 
         Mockito.verify(reviewInteractionRepository).deleteById(interactionId);
     }
+
+    @Test
+    public void testGetReviewOwner_ShouldReturnOwnerId() {
+        LocalDateTime created = LocalDateTime.now();
+        LocalDateTime updated = LocalDateTime.now();
+        String reviewId = "reviewId";
+        String expectedOwnerId = "ownerId";
+        Review review = new Review(reviewId, "r1", expectedOwnerId, 3,
+                "good", created, updated);
+
+
+        Mockito.when(reviewRepository.findById(reviewId)).thenReturn(Optional.of(review));
+
+        String ownerId = reviewService.getReviewOwner(reviewId);
+
+        assertEquals(expectedOwnerId, ownerId);
+    }
+
 
 
 

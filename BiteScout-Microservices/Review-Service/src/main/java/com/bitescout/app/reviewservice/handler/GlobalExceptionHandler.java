@@ -1,5 +1,6 @@
 package com.bitescout.app.reviewservice.handler;
 
+import com.bitescout.app.reviewservice.review.exception.ReviewMissingFieldException;
 import com.bitescout.app.reviewservice.review.exception.ReviewNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,13 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handle(ReviewNotFoundException exp){
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
+                .body(exp.getMessage());
+    }
+
+    @ExceptionHandler(ReviewMissingFieldException.class)
+    public ResponseEntity<String> handle(ReviewMissingFieldException exp){
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
                 .body(exp.getMessage());
     }
 
