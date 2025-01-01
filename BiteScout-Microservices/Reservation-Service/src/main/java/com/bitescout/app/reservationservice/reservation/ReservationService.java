@@ -62,7 +62,6 @@ public class ReservationService {
 
         reservation.setReservationStatus(statusRequest);
         repository.save(reservation);
-        repository.flush();
 
         producer.sendReservationNotification(mapper.toReservationMessage(reservation));
 
