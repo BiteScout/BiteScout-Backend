@@ -23,5 +23,4 @@ public class UserDetails {
     private String city;
     private String postalCode;
     private String address;
-    private String profilePicture;
 }

@@ -6,4 +6,4 @@ spring:
   file:
     storage:
       service:
-        url: https://gcloud-storage-264767797819.us-central1.run.app/api/storage
+        url: http://localhost:8080/api/storage
