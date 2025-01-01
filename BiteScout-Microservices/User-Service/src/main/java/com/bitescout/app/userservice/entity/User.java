@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -33,6 +34,9 @@ public class User {
 
     @Column(nullable = false)
     private boolean enabled;
+
+    @Column
+    private String profilePicture;
 
     @Enumerated(EnumType.STRING)
     private Role role;

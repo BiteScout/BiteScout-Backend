@@ -10,6 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -51,10 +52,17 @@ public class UserController {
 
     @PutMapping("/update")
     @PreAuthorize("hasRole('ADMIN') or @userService.getUser(#request.id).username == principal")
-    public ResponseEntity<UserDTO> updateUser(@Valid @RequestBody UserUpdateRequestDTO request,
-                                              @RequestPart(required = false) MultipartFile profilePicture) {
-        return ResponseEntity.ok(userService.updateUser(request, profilePicture));
+    public ResponseEntity<UserDTO> updateUser(@Valid @RequestBody UserUpdateRequestDTO request) {
+        return ResponseEntity.ok(userService.updateUser(request));
     }
+
+    @PutMapping("/update-picture/{userId}")
+    @PreAuthorize("hasRole('ADMIN') or @userService.getUser(#userId).username == principal")
+    public ResponseEntity<String> updateUserPicture(@PathVariable String userId, @RequestPart MultipartFile image) throws IOException {
+        return ResponseEntity.ok(userService.updateUserPicture(userId, image));
+    }
+
+
 
     @DeleteMapping("/{userId}")
     @PreAuthorize("hasRole('ADMIN') or @userService.getUser(#userId).username == principal")
