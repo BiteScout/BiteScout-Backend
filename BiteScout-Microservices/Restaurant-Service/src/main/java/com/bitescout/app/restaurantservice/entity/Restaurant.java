@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import org.locationtech.jts.geom.Point;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -43,12 +45,19 @@ public class Restaurant {
     @Column (nullable = false)
     private LocalDateTime updatedAt;
 
+    @ElementCollection
+    @CollectionTable(name = "restaurant_images", joinColumns = @JoinColumn(name = "restaurant_id"))
+    @Column(name = "image_url")
+    private List<String> images = new ArrayList<>();
+
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
     }
-
+    public void addImageUrl(String imageUrl) {
+        this.images.add(imageUrl);
+    }
     @PreUpdate
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
