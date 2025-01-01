@@ -13,5 +13,6 @@ public interface UserServiceClient {
     @GetMapping("/{userId}")
     ResponseEntity<UserDTO> getUser(@PathVariable String userId);
 
-
+    @GetMapping("/isEnabled/{userId}")
+    ResponseEntity<Boolean> isEnabled(@PathVariable String userId);
 }
