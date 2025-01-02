@@ -15,5 +15,5 @@ public interface UserServiceClient {
     ResponseEntity<UserDto> getUserByUsername(@PathVariable String username);
 
     @PutMapping("/enable-user/{userId}")
-    ResponseEntity<Void> update(@PathVariable String userId);
+    ResponseEntity<Boolean> update(@PathVariable String userId);
 }
