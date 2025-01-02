@@ -3,3 +3,7 @@ spring:
     import: optional:configserver:http://localhost:8888
   application:
     name: restaurant-service
+  file:
+    storage:
+      service:
+        url: https://gcloud-storage-service-264767797819.us-central1.run.app/api/storage/restaurant-picture/

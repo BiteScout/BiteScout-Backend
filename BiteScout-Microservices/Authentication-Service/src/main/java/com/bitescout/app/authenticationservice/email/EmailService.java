@@ -25,8 +25,7 @@ public class EmailService {
     private final JavaMailSender mailSender;
     private final SpringTemplateEngine templateEngine;
 
-    @Value("${auth-service.url}")
-    private String authServiceUrl;
+    private final String authServiceUrl = "http://localhost:8222";
     @Async
     public void sendVerificationEmail(String destinationEmail, String token) throws MessagingException {
         MimeMessage mimeMessage = mailSender.createMimeMessage();

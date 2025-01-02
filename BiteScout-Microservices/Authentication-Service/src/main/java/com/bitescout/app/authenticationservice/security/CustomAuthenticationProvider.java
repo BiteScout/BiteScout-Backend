@@ -8,6 +8,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -15,30 +16,23 @@ import org.springframework.stereotype.Component;
 public class CustomAuthenticationProvider implements AuthenticationProvider {
 
     private final CustomUserDetailsService userDetailsService;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String username = authentication.getName();
         String password = (String) authentication.getCredentials();
-
         UserDetails user = userDetailsService.loadUserByUsername(username);
 
-        if (user == null || !user.getPassword().equals(password)) {
+        // Validate the password by comparing the encoded password in DB and the raw password entered
+        if (user == null) {
             throw new BadCredentialsException("Invalid username or password");
         }
-
-        return new UsernamePasswordAuthenticationToken(user, password, user.getAuthorities());
+        if(passwordEncoder.matches(password, user.getPassword()) || user.getPassword().equals(password))
+            return new UsernamePasswordAuthenticationToken(user, password, user.getAuthorities());
+        else throw new BadCredentialsException("Invalid username or password");
     }
 
-    /**
-     * This method checks if the provided authentication class is assignable from
-     * UsernamePasswordAuthenticationToken. This ensures that this AuthenticationProvider
-     * only handles authentication requests that are instances of UsernamePasswordAuthenticationToken
-     * or its subclasses.
-     *
-     * @param authentication the class of the authentication object
-     * @return true if the authentication class is assignable from UsernamePasswordAuthenticationToken, false otherwise
-     */
     @Override
     public boolean supports(Class<?> authentication) {
         return UsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication);

@@ -16,6 +16,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -34,13 +35,17 @@ import java.util.stream.Collectors;
 public class UserService {
     private final UserRepository userRepository;
     private final FavoriteRepository favoriteRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final BCryptPasswordEncoder passwordEncoder;
     private final ModelMapper modelMapper;
     private final RestTemplate restTemplate;
 
-    @Value("${spring.file.storage.service.url}")
-    private String fileStorageServiceUrl;
 
+
+    @Value("${spring.email.storage.service.url}")
+    private String emailStorageServiceUrl ;
+
+    @Value("${spring.file.storage.service.url}")
+    private String fileStorageServiceUrl ;
     // USER SERVICES //
 
     public UserAuthDTO createUser(RegisterRequestDTO request) {
@@ -96,7 +101,8 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         // Save the profile picture to a storage location (e.g., file system, cloud storage)
-        String profilePictureUrl = saveProfilePicture(profilePicture);
+        String userid = user.getId().toString();
+        String profilePictureUrl = saveProfilePicture(userid,profilePicture);
 
         // Update the user's profile picture URL
         user.setProfilePicture(profilePictureUrl);
@@ -106,7 +112,7 @@ public class UserService {
         return profilePictureUrl;
     }
 
-    private String saveProfilePicture(MultipartFile image) {
+    private String saveProfilePicture(String userid,MultipartFile image) {
         if (image == null || image.isEmpty()) {
             throw new IllegalArgumentException("Profile picture must not be null or empty");
         }
@@ -136,7 +142,7 @@ public class UserService {
 
         // Send POST request
         ResponseEntity<String> response = restTemplate.postForEntity(
-                fileStorageServiceUrl + "/upload",
+                fileStorageServiceUrl + userid +"/upload",
                 requestEntity,
                 String.class
         );
@@ -157,7 +163,7 @@ public class UserService {
             user.setUsername(request.getUsername());
         }
         if (request.getPassword() != null) {
-            user.setPassword(request.getPassword());
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
         }
 
         // Save updated user and map to DTO
@@ -240,36 +246,12 @@ public class UserService {
                 .build();
     }
 
-    private String uploadImageToFileSystem(MultipartFile file) {
-        if (file.isEmpty()) {
-            throw new RuntimeException("File is empty");
-        }
 
-        try {
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-            Resource fileAsResource = new ByteArrayResource(file.getBytes()) {
-                @Override
-                public String getFilename() {
-                    return file.getOriginalFilename();
-                }
-            };
 
-            HttpEntity<Resource> requestEntity = new HttpEntity<>(fileAsResource, headers);
-            ResponseEntity<String> response = restTemplate.postForEntity(fileStorageServiceUrl + "/upload", requestEntity, String.class);
 
-            return response.getBody();
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to read file bytes", e);
-        }
-    }
-
-    private void deleteImageFromFileSystem(String filename) {
-        restTemplate.delete(fileStorageServiceUrl + "/delete/" + filename);
-    }
     private void saveToEmailList(String email) {
         HttpEntity<String> requestEntity = new HttpEntity<>(email);
-        restTemplate.postForEntity(fileStorageServiceUrl + "/emailList", requestEntity, Void.class);
+        restTemplate.postForEntity(emailStorageServiceUrl + "/emailList", requestEntity, Void.class);
     }
 
 
