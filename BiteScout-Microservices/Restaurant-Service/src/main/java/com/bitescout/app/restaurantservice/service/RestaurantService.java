@@ -148,7 +148,7 @@ public class RestaurantService {
     }
 
     public List<RestaurantResponseDTO> getRestaurantsByPriceRange(String priceRange) {
-        return restaurantRepository.findByPriceRangeContainingIgnoreCase(priceRange).stream()
+        return restaurantRepository.findByPriceRangeIgnoreCase(priceRange).stream()
                 .map(restaurant -> modelMapper.map(restaurant, RestaurantResponseDTO.class))
                 .collect(Collectors.toList());
     }
