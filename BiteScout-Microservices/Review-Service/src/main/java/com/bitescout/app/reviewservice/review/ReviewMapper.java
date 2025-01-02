@@ -13,6 +13,9 @@ public class ReviewMapper {
     }
 
     public Review toReview(ReviewRequest reviewRequest, String userId){
+        if(reviewRequest ==null){
+            throw new NullPointerException("reviewRequest is null");
+        }
         return Review.builder().customerId(userId)
                 .restaurantId(reviewRequest.restaurantId())
                 .rating(reviewRequest.rating())

@@ -1,6 +1,7 @@
 package com.bitescout.app.reviewservice.review;
 
 import com.bitescout.app.reviewservice.review.dto.*;
+import com.bitescout.app.reviewservice.review.exception.ReviewMissingFieldException;
 import com.bitescout.app.reviewservice.review.exception.ReviewNotFoundException;
 import jakarta.ws.rs.BadRequestException;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,9 @@ public class ReviewService {
     private final ReviewMapper mapper;
 
     public ReviewResponse createReview(ReviewRequest reviewRequest, String userId) {
+        if(reviewRequest.restaurantId().isEmpty() || userId.isEmpty() || reviewRequest.comment().isEmpty()) {
+            throw new ReviewMissingFieldException("User ID and/or Restaurant ID cannot be empty");
+        }
         var review = mapper.toReview(reviewRequest, userId);
         repository.save(review);
         return mapper.toReviewResponse(review);
@@ -70,7 +74,7 @@ public class ReviewService {
     public void deleteReviewInteraction(String reviewInteractionId, String customerId) {
         var reviewInteraction = reviewInteractionRepository.findByIdAndInteractingUserId(reviewInteractionId, customerId).orElseThrow(() ->
                 new BadRequestException("Review interaction not found"));
-        repository.deleteById(reviewInteractionId);
+        reviewInteractionRepository.deleteById(reviewInteractionId);//interaction ı reviewInteraction repo dan silmeli
     }
 
     public int getLikeCountOfReview(String reviewId) {

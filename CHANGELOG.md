@@ -2,6 +2,16 @@
 
 All the changes and updates documented in this file.
 
+## [0.9.3] 2025-01-01
+
+### Added
+
+- Unit tests for review and review interactions
+
+### Fixed
+
+- Review service delete interaction operation from wrong repository
+
 ## [0.9.2] - 2024-12-31
 
 ### Added
