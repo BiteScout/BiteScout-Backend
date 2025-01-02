@@ -38,7 +38,7 @@ public class RestaurantServiceTest {
     @DisplayName("TC-R01 Create Restaurant with valid data")
     @Test
     public void createRestaurantWithValidData_ShouldReturn201() throws Exception {
-        String token = authClient.login("admin", "$2a$10$2529eBq3R6Y41t03Mku2I.2Nh3W0p25lt.s.85mG0kiAvxI4bsAHa");
+        String token = authClient.login("admin", "admin1234");
         String jsonRequest = """
         {
             "ownerId": "4b8e6db8-2b9e-4204-85e8-ff0bd082b9d7",
@@ -76,7 +76,7 @@ public class RestaurantServiceTest {
     @DisplayName("TC-R02 Attempt to create a restaurant with missing name")
     @Test
     public void createRestaurantWithMissingName_ShouldReturn400() throws Exception {
-        String token = authClient.login("admin", "$2a$10$2529eBq3R6Y41t03Mku2I.2Nh3W0p25lt.s.85mG0kiAvxI4bsAHa");
+        String token = authClient.login("admin", "admin1234");
         String jsonRequest = """
         {
             "ownerId": "4b8e6db8-2b9e-4204-85e8-ff0bd082b9d7",
@@ -115,7 +115,7 @@ public class RestaurantServiceTest {
     @Test
     public void retrieveRestaurantById_ShouldReturn200() throws Exception {
         //Create a restaurant to retrieve
-        String token = authClient.login("admin", "$2a$10$2529eBq3R6Y41t03Mku2I.2Nh3W0p25lt.s.85mG0kiAvxI4bsAHa");
+        String token = authClient.login("admin", "admin1234");
         String jsonRequest = """
         {
             "ownerId": "4b8e6db8-2b9e-4204-85e8-ff0bd082b9d7",
@@ -168,7 +168,7 @@ public class RestaurantServiceTest {
     @Test
     public void retrieveAllRestaurantsByOwnerId_ShouldReturn200() throws Exception {
         //Create a restaurant to retrieve
-        String token = authClient.login("admin", "$2a$10$2529eBq3R6Y41t03Mku2I.2Nh3W0p25lt.s.85mG0kiAvxI4bsAHa");
+        String token = authClient.login("admin", "admin1234");
         String jsonRequest1 = """
         {
             "ownerId": "4b8e6db8-2b9e-4204-85e8-ff0bd082b9d7",
@@ -223,7 +223,7 @@ public class RestaurantServiceTest {
     @Test
     public void updateRestaurantWithValidInputs_ShouldReturn200() throws Exception {
         //Create a restaurant to update
-        String token = authClient.login("admin", "$2a$10$2529eBq3R6Y41t03Mku2I.2Nh3W0p25lt.s.85mG0kiAvxI4bsAHa");
+        String token = authClient.login("admin", "admin1234");
         String jsonRequest = """
         {
             "ownerId": "4b8e6db8-2b9e-4204-85e8-ff0bd082b9d7",
@@ -282,7 +282,7 @@ public class RestaurantServiceTest {
     @Test
     public void updateRestaurantWithNonMatchingOwnerId_ShouldReturn403() throws Exception {
         //Create a restaurant to update
-        String token = authClient.login("admin", "$2a$10$2529eBq3R6Y41t03Mku2I.2Nh3W0p25lt.s.85mG0kiAvxI4bsAHa");
+        String token = authClient.login("admin", "admin1234");
         String wrong_token = "wrong_token";
         String jsonRequest = """
         {
@@ -342,7 +342,7 @@ public class RestaurantServiceTest {
     @Test
     public void retrieveRestaurantsNearSpecificLocation_ShouldReturn200() throws Exception {
         //Create a restaurant to retrieve
-        String token = authClient.login("admin", "$2a$10$2529eBq3R6Y41t03Mku2I.2Nh3W0p25lt.s.85mG0kiAvxI4bsAHa");
+        String token = authClient.login("admin", "admin1234");
         String jsonRequest1 = """
         {
             "ownerId": "4b8e6db8-2b9e-4204-85e8-ff0bd082b9d7",
@@ -397,7 +397,7 @@ public class RestaurantServiceTest {
     @Test
     public void searchRestaurantsByName_ShouldReturn200() throws Exception {
         //Create a restaurant to search
-        String token = authClient.login("admin", "$2a$10$2529eBq3R6Y41t03Mku2I.2Nh3W0p25lt.s.85mG0kiAvxI4bsAHa");
+        String token = authClient.login("admin", "admin1234");
         String jsonRequest = """
         {
             "ownerId": "4b8e6db8-2b9e-4204-85e8-ff0bd082b9d7",
@@ -435,7 +435,7 @@ public class RestaurantServiceTest {
     @Test
     public void retrieveRestaurantsByCuisineType_ShouldReturn200() throws Exception {
         //Create a restaurant to retrieve
-        String token = authClient.login("admin", "$2a$10$2529eBq3R6Y41t03Mku2I.2Nh3W0p25lt.s.85mG0kiAvxI4bsAHa");
+        String token = authClient.login("admin", "admin1234");
         String jsonRequest1 = """
         {
             "ownerId": "4b8e6db8-2b9e-4204-85e8-ff0bd082b9d7",
@@ -473,7 +473,7 @@ public class RestaurantServiceTest {
     @Test
     public void retrieveRestaurantsByPriceRange_ShouldReturn200() throws Exception {
         //Create a restaurant to retrieve
-        String token = authClient.login("admin", "$2a$10$2529eBq3R6Y41t03Mku2I.2Nh3W0p25lt.s.85mG0kiAvxI4bsAHa");
+        String token = authClient.login("admin", "admin1234");
         String jsonRequest1 = """
         {
             "ownerId": "4b8e6db8-2b9e-4204-85e8-ff0bd082b9d7",
@@ -511,7 +511,7 @@ public class RestaurantServiceTest {
     @Test
     public void deleteRestaurantAsAdminOrOwnership_ShouldReturn204() throws Exception {
         //Create a restaurant to delete
-        String token = authClient.login("admin", "$2a$10$2529eBq3R6Y41t03Mku2I.2Nh3W0p25lt.s.85mG0kiAvxI4bsAHa");
+        String token = authClient.login("admin", "admin1234");
         String jsonRequest = """
         {
             "ownerId": "4b8e6db8-2b9e-4204-85e8-ff0bd082b9d7",
@@ -550,7 +550,7 @@ public class RestaurantServiceTest {
     @Test
     public void deleteRestaurantAsNonAdminWithoutOwnership_ShouldReturn403() throws Exception {
         //Create a restaurant to delete
-        String token = authClient.login("admin", "$2a$10$2529eBq3R6Y41t03Mku2I.2Nh3W0p25lt.s.85mG0kiAvxI4bsAHa");
+        String token = authClient.login("admin", "admin1234");
         String wrong_token = "wrong_token";
         String jsonRequest = """
         {
@@ -594,7 +594,7 @@ public class RestaurantServiceTest {
     @Test
     public void updateRestaurantMenuAsAdminOrOwner_ShouldReturn200() throws Exception {
         //Create a restaurant to update menu
-        String token = authClient.login("admin", "$2a$10$2529eBq3R6Y41t03Mku2I.2Nh3W0p25lt.s.85mG0kiAvxI4bsAHa");
+        String token = authClient.login("admin", "admin1234");
         String jsonRequest = """
         {
             "ownerId": "4b8e6db8-2b9e-4204-85e8-ff0bd082b9d7",
@@ -636,7 +636,7 @@ public class RestaurantServiceTest {
     @Test
     public void createSpecialOfferForRestaurantAsAdminOrOwner_ShouldReturn201() throws Exception {
         //Create a restaurant to create special offer
-        String token = authClient.login("admin", "$2a$10$2529eBq3R6Y41t03Mku2I.2Nh3W0p25lt.s.85mG0kiAvxI4bsAHa");
+        String token = authClient.login("admin", "admin1234");
         String jsonRequest = """
                     {
                         "ownerId": "4b8e6db8-2b9e-4204-85e8-ff0bd082b9d7",
@@ -691,7 +691,7 @@ public class RestaurantServiceTest {
     @Test
     public void retrieveAllSpecialOffersForRestaurant_ShouldReturn200() throws Exception {
         //Create a restaurant to create special offer
-        String token = authClient.login("admin", "$2a$10$2529eBq3R6Y41t03Mku2I.2Nh3W0p25lt.s.85mG0kiAvxI4bsAHa");
+        String token = authClient.login("admin", "admin1234");
         String jsonRequest = """
                     {
                         "ownerId": "4b8e6db8-2b9e-4204-85e8-ff0bd082b9d7",
@@ -764,7 +764,7 @@ public class RestaurantServiceTest {
     @Test
     public void updateSpecialOfferForRestaurantAsAdminOrOwner_ShouldReturn200() throws Exception {
         //Create a restaurant to create special offer
-        String token = authClient.login("admin", "$2a$10$2529eBq3R6Y41t03Mku2I.2Nh3W0p25lt.s.85mG0kiAvxI4bsAHa");
+        String token = authClient.login("admin", "admin1234");
         String jsonRequest = """
                     {
                         "ownerId": "4b8e6db8-2b9e-4204-85e8-ff0bd082b9d7",
@@ -839,7 +839,7 @@ public class RestaurantServiceTest {
     @Test
     public void updateSpecialOfferAsNonAdminWithoutOwnership_ShouldReturn403() throws Exception {
         //Create a restaurant to create special offer
-        String token = authClient.login("admin", "$2a$10$2529eBq3R6Y41t03Mku2I.2Nh3W0p25lt.s.85mG0kiAvxI4bsAHa");
+        String token = authClient.login("admin", "admin1234");
         String wrong_token = "wrong_token";
         String jsonRequest = """
                     {
@@ -914,7 +914,7 @@ public class RestaurantServiceTest {
     @Test
     public void deleteSpecialOfferForRestaurantAsAdminOrOwner_ShouldReturn204() throws Exception {
         //Create a restaurant to create special offer
-        String token = authClient.login("admin", "$2a$10$2529eBq3R6Y41t03Mku2I.2Nh3W0p25lt.s.85mG0kiAvxI4bsAHa");
+        String token = authClient.login("admin", "admin1234");
         String jsonRequest = """
                     {
                         "ownerId": "4b8e6db8-2b9e-4204-85e8-ff0bd082b9d7",
@@ -978,7 +978,7 @@ public class RestaurantServiceTest {
     @Test
     public void deleteSpecialOfferAsNonAdminWithoutOwnership_ShouldReturn403() throws Exception {
         //Create a restaurant to create special offer
-        String token = authClient.login("admin", "$2a$10$2529eBq3R6Y41t03Mku2I.2Nh3W0p25lt.s.85mG0kiAvxI4bsAHa");
+        String token = authClient.login("admin", "admin1234");
         String wrong_token = "wrong_token";
         String jsonRequest = """
                     {
