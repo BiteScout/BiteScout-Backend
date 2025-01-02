@@ -72,6 +72,11 @@ public class RestaurantController {
         return ResponseEntity.ok(restaurantService.getRestaurantsByPriceRange(priceRange));
     }
 
+    @GetMapping("/getAllCuisines")
+    public ResponseEntity<List<String>> getAllCuisines() {
+        return ResponseEntity.ok(restaurantService.getAllCuisines());
+    }
+
     @GetMapping("/getRestaurantId/{restaurantName}")
     @PreAuthorize("hasRole('ADMIN') or (@securityService.getRestaurantOwnerUsername(@securityService.getRestaurantOwnerId(#restaurantId)) == principal and hasRole('RESTAURANT_OWNER'))")
     public ResponseEntity<String> getRestaurantIdByName(@PathVariable String restaurantName) {

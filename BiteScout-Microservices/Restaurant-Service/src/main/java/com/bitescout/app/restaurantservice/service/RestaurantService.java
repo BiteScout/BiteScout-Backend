@@ -94,6 +94,18 @@ public class RestaurantService {
                 .orElseThrow(() -> new ResourceNotFoundException("Restaurant not found with ID: " + restaurantId));
     }
 
+    public List<String> getAllCuisines() {
+        //first get all restaurants
+        List<Restaurant> restaurants = restaurantRepository.findAll();
+        //then get all cuisines
+        List<String> cuisines = new ArrayList<>();
+        for (Restaurant restaurant : restaurants) {
+            if (!cuisines.contains(restaurant.getCuisineType())) {
+                cuisines.add(restaurant.getCuisineType());
+            }
+        }
+        return cuisines;
+    }
 
     public List<RestaurantResponseDTO> getRestaurantsByOwnerId(String ownerId) {
         return restaurantRepository.findByOwnerId(UUID.fromString(ownerId)).stream()
