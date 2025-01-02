@@ -59,7 +59,7 @@ public class ReviewController {
     @PutMapping("/{reviewId}") // userId ReviewRequest'ten de alabiliriz headerdan da alabiliriz
     @PreAuthorize("hasRole('ADMIN') or @securityService.isOwner(#userId, principal)")
     public ResponseEntity<ReviewResponse> updateReview(
-            @RequestBody ReviewUpdateRequest reviewRequest,
+            @RequestBody @Valid ReviewUpdateRequest reviewRequest,
             @RequestAttribute("userId") String userId,
             @PathVariable("reviewId") String reviewId
 
