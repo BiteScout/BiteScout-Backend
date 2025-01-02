@@ -20,7 +20,7 @@ public class VerificationToken {
 
     private String token;
 
-    @Transient
+    @Column(nullable = false)
     private String username;
 
     private LocalDateTime expiryDate;

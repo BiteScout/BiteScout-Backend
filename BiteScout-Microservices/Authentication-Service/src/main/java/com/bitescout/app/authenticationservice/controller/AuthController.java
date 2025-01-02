@@ -1,6 +1,7 @@
 package com.bitescout.app.authenticationservice.controller;
 
 import com.bitescout.app.authenticationservice.dto.TokenDto;
+import com.bitescout.app.authenticationservice.entity.VerificationToken;
 import com.bitescout.app.authenticationservice.request.LoginRequest;
 import com.bitescout.app.authenticationservice.request.RegisterRequest;
 import com.bitescout.app.authenticationservice.service.AuthService;
@@ -8,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -36,6 +39,11 @@ public class AuthController {
     public ResponseEntity<String> verifyEmail(@RequestParam String token) {
         authService.verifyToken(token);
         return ResponseEntity.ok("Email verified successfully");
+    }
+
+    @GetMapping("/getAllTokens")
+    public ResponseEntity<List<VerificationToken>> getAllTokens() {
+        return ResponseEntity.ok(authService.getAllTokens());
     }
 
 

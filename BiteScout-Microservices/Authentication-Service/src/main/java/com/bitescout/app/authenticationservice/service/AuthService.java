@@ -17,6 +17,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -58,6 +59,11 @@ public class AuthService {
         return TokenDto.builder()
                 .token(jwtService.generateToken(userDto.getUsername()))
                 .build();
+    }
+
+
+    public List<VerificationToken> getAllTokens() {
+        return tokenRepository.findAll();
     }
 
     public void verifyToken(String token) {
