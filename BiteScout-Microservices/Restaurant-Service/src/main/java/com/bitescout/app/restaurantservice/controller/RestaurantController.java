@@ -11,8 +11,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.multipart.MultipartFile;
 
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -70,6 +72,11 @@ public class RestaurantController {
         return ResponseEntity.ok(restaurantService.getRestaurantsByPriceRange(priceRange));
     }
 
+    @GetMapping("/getAllCuisines")
+    public ResponseEntity<List<String>> getAllCuisines() {
+        return ResponseEntity.ok(restaurantService.getAllCuisines());
+    }
+
     @GetMapping("/getRestaurantId/{restaurantName}")
     @PreAuthorize("hasRole('ADMIN') or (@securityService.getRestaurantOwnerUsername(@securityService.getRestaurantOwnerId(#restaurantId)) == principal and hasRole('RESTAURANT_OWNER'))")
     public ResponseEntity<String> getRestaurantIdByName(@PathVariable String restaurantName) {
@@ -93,6 +100,11 @@ public class RestaurantController {
     public ResponseEntity<Void> deleteAllRestaurants() {
         restaurantService.deleteAllRestaurants();
         return ResponseEntity.noContent().build();
+    }
+    @PutMapping("{restaurantId}/upload-picture")
+    @PreAuthorize("hasRole('ADMIN') or (@securityService.getRestaurantOwnerUsername(@securityService.getRestaurantOwnerId(#restaurantId)) == principal and hasRole('RESTAURANT_OWNER'))")
+    public ResponseEntity<String> uploadPicture(@PathVariable String restaurantId, @RequestPart MultipartFile image) throws IOException {
+        return ResponseEntity.ok(restaurantService.saveImage(restaurantId,image));
     }
 
     // SPECIAL OFFER ENDPOINTS //
