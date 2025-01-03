@@ -16,7 +16,7 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       properties:
-        spring.json.type.mapping: reservationRequest:com.bitescout.app.restaurantservice.kafka.ReservationRequest,specialOffer:com.bitescout.app.restaurantservice.kafka.SpecialOffer
+        spring.json.type.mapping: specialOfferMessage:com.bitescout.app.restaurantservice.kafka.SpecialOfferMessage
         #### information for reservationRequest ###
         # reservation requests will be represented by a record named ReservationRequest
         # (and put that in a package named kafka).
