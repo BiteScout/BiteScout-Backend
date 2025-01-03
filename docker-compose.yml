@@ -63,6 +63,7 @@ services:
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
     networks:
       - microservices-net
+    restart: unless-stopped
 
   mail-dev:
     container_name: ms-mail-dev
