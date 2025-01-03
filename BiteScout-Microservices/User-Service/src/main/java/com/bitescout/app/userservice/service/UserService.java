@@ -155,10 +155,7 @@ public class UserService {
         User user = userRepository.findById(UUID.fromString(request.getId()))
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Update UserDetails
-        user.setUserDetails(updateUserDetails(user.getUserDetails(), request));
-
-        // Map other fields from the request to the User entity
+        // Update fields conditionally
         if (request.getUsername() != null) {
             user.setUsername(request.getUsername());
         }
@@ -166,10 +163,37 @@ public class UserService {
             user.setPassword(passwordEncoder.encode(request.getPassword()));
         }
 
-        // Save updated user and map to DTO
+        // Update UserDetails conditionally
+        if (request.getFirstName() != null || request.getLastName() != null ||
+                request.getPhoneNumber() != null || request.getCountry() != null ||
+                request.getCity() != null || request.getPostalCode() != null ||
+                request.getAddress() != null) {
+
+            // Update existing UserDetails or create a new one
+            UserDetails updatedDetails = user.getUserDetails() != null ? user.getUserDetails() : new UserDetails();
+
+            if (request.getFirstName() != null) updatedDetails.setFirstName(request.getFirstName());
+            if (request.getLastName() != null) updatedDetails.setLastName(request.getLastName());
+            if (request.getPhoneNumber() != null) updatedDetails.setPhoneNumber(request.getPhoneNumber());
+            if (request.getCountry() != null) updatedDetails.setCountry(request.getCountry());
+            if (request.getCity() != null) updatedDetails.setCity(request.getCity());
+            if (request.getPostalCode() != null) updatedDetails.setPostalCode(request.getPostalCode());
+            if (request.getAddress() != null) updatedDetails.setAddress(request.getAddress());
+
+            user.setUserDetails(updatedDetails);
+        }
+
+        // Update profile picture conditionally
+        if (request.getProfilePicture() != null) {
+            user.setProfilePicture(request.getProfilePicture());
+        }
+
+        // Save updated user
         user = userRepository.save(user);
+
         return modelMapper.map(user, UserDTO.class);
     }
+
 
     public UserDTO getUsername(UUID userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
