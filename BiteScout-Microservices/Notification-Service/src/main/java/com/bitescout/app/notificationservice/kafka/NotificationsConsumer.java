@@ -2,7 +2,6 @@ package com.bitescout.app.notificationservice.kafka;
 
 import com.bitescout.app.notificationservice.email.EmailService;
 import com.bitescout.app.notificationservice.kafka.offer.SpecialOfferMessage;
-import com.bitescout.app.notificationservice.kafka.reservation.IncomingReservationMessage;
 import com.bitescout.app.notificationservice.kafka.reservation.ReservationStatus;
 import com.bitescout.app.notificationservice.kafka.reservation.ReservationStatusMessage;
 import com.bitescout.app.notificationservice.kafka.review.ReviewInteractionMessage;
@@ -137,21 +136,20 @@ public class NotificationsConsumer {
     public void consumeSpecialOfferTopic(SpecialOfferMessage message){
         log.info("Consuming special offer message from special-offer-topic");
 
-        RestaurantResponse restaurantResponse = restaurantClient.getRestaurant(message.restaurantId()).get();
         List<UserResponse> users = userClient.getUsersByFavoritedRestaurant(String.valueOf(message.restaurantId()));
 
-        String restaurantName = restaurantResponse.getName();
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm dd-MM");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d MMMM", Locale.ENGLISH);
         String startDate = message.startDate().format(formatter);
         String endDate = message.endDate().format(formatter);
+
 
         for(UserResponse user: users){
             repository.save(Notification.builder()
                     .userId(String.valueOf(user.id()))
                     .message(String.format(
                             "One of your favorite restaurants, %s, has a special offer between" +
-                                    " %s and %s.", restaurantName, startDate, endDate)
+                                    " %s and %s: %s, %s", message.restaurantName(), startDate, endDate,
+                                    message.title(), message.description())
                             )
                     .notificationType(NotificationType.SPECIAL_OFFER_NOTIFICATION)
                     .build());

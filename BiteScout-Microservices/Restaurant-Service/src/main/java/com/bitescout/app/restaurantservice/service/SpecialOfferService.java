@@ -2,6 +2,8 @@ package com.bitescout.app.restaurantservice.service;
 
 import com.bitescout.app.restaurantservice.dto.*;
 import com.bitescout.app.restaurantservice.entity.*;
+import com.bitescout.app.restaurantservice.kafka.SpecialOfferMessage;
+import com.bitescout.app.restaurantservice.kafka.SpecialOfferProducer;
 import com.bitescout.app.restaurantservice.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -16,7 +18,7 @@ import java.util.stream.Collectors;
 public class SpecialOfferService {
     private final SpecialOfferRepository specialOfferRepository;
     private final RestaurantRepository restaurantRepository;
-
+    private final SpecialOfferProducer specialOfferProducer;
     private final ModelMapper modelMapper;
 
     public SpecialOfferResponseDTO createSpecialOffer(String restaurantId, SpecialOfferRequestDTO specialOfferRequest) {
@@ -25,6 +27,16 @@ public class SpecialOfferService {
 
         SpecialOffer specialOffer = modelMapper.map(specialOfferRequest, SpecialOffer.class);
         specialOffer.setRestaurant(restaurant);
+
+        specialOfferProducer.sendSpecialOfferNotification(new SpecialOfferMessage(
+                specialOffer.getId(),
+                restaurant.getId(),
+                restaurant.getName(),
+                specialOffer.getTitle(),
+                specialOffer.getDescription(),
+                specialOffer.getStartDate(),
+                specialOffer.getEndDate()
+        ));
 
         return modelMapper.map(specialOfferRepository.save(specialOffer), SpecialOfferResponseDTO.class);
     }

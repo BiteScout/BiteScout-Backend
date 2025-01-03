@@ -1,8 +1,7 @@
-package com.bitescout.app.notificationservice.kafka.offer;
+package com.bitescout.app.restaurantservice.kafka;
 
 import java.time.LocalDate;
 import java.util.UUID;
-
 
 public record SpecialOfferMessage(
         UUID id,
