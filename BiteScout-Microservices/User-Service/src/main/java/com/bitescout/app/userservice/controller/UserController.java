@@ -63,7 +63,10 @@ public class UserController {
         return ResponseEntity.ok(userService.updateUserPicture(userId, image));
     }
 
-
+    @GetMapping("/getPicture/{userId}")
+    public ResponseEntity<String> getUserPicture(@PathVariable String userId) {
+        return ResponseEntity.ok(userService.getProfilePicture(userId));
+    }
 
     @DeleteMapping("/{userId}")
     @PreAuthorize("hasRole('ADMIN') or (@userService.getUser(#userId).username == principal)")
