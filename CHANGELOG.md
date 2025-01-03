@@ -2,6 +2,10 @@
 
 All the changes and updates documented in this file.
 
+## [0.9.4] 2025-01-03
+### Added
+- Review documentation
+
 ## [0.9.3] 2025-01-01
 
 ### Added
