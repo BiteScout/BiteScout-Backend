@@ -5,14 +5,20 @@ services:
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
-      POSTGRES_DB:
-      PGDATA: /data/postgres
+      POSTGRES_MULTIPLE_DATABASES: users,authentication,rankings,reservations,notifications
+      POSTGRES_DB: postgres
     volumes:
-      - postgres:/data/postgres
+      - postgres:/var/lib/postgresql/data
+      - ./init-multiple-databases.sh:/docker-entrypoint-initdb.d/10-init-multiple-databases.sh
     ports:
       - "5434:5432"
     networks:
       - microservices-net
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U user -d postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     restart: unless-stopped
   postgis:
     image: postgis/postgis:latest
@@ -20,12 +26,20 @@ services:
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: gisdb
+      POSTGRES_DB: postgres
     ports:
       - "5433:5432"
     volumes:
       - postgis-data:/var/lib/postgresql/data
-
+      - ./init-postgis.sh:/docker-entrypoint-initdb.d/init-postgis.sh
+    networks:
+      - microservices-net
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U user -d restaurants" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
   mongodb:
     image: mongo
     container_name: mongo_db
@@ -63,6 +77,7 @@ services:
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
     networks:
       - microservices-net
+    restart: unless-stopped
 
   mail-dev:
     container_name: ms-mail-dev

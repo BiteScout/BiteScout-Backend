@@ -87,6 +87,12 @@ public class RestaurantService {
         return response.getBody();
     }
 
+    public List<String> getImage(String restaurantId) {
+        Restaurant restaurant = restaurantRepository.findById(UUID.fromString(restaurantId))
+                .orElseThrow(() -> new ResourceNotFoundException("Restaurant not found"));
+        return restaurant.getImages();
+    }
+
     public RestaurantResponseDTO getRestaurant(String restaurantId) {
         System.out.println("Fetching restaurant with ID: " + restaurantId);
         return restaurantRepository.findById(UUID.fromString(restaurantId))

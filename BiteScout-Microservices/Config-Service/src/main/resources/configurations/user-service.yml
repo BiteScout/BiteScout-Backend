@@ -6,10 +6,17 @@ spring:
     url: jdbc:postgresql://localhost:5434/users
     username: user
     password: password
+  sql:
+    init:
+      mode: always  # Will run SQL files on every startup
+      data-locations: classpath:db/data.sql
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
+      format_sql: true
+    show-sql: true
     database: postgresql
+    defer-datasource-initialization: true
     database-platform: org.hibernate.dialect.PostgreSQLDialect
   servlet:
     multipart:

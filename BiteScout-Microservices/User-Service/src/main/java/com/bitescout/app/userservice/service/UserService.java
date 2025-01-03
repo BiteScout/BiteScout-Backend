@@ -112,6 +112,11 @@ public class UserService {
         return profilePictureUrl;
     }
 
+    public String getProfilePicture(String userId) {
+        User user = userRepository.findById(UUID.fromString(userId)).orElseThrow(() -> new RuntimeException("User not found"));
+        return user.getProfilePicture();
+    }
+
     private String saveProfilePicture(String userid,MultipartFile image) {
         if (image == null || image.isEmpty()) {
             throw new IllegalArgumentException("Profile picture must not be null or empty");
