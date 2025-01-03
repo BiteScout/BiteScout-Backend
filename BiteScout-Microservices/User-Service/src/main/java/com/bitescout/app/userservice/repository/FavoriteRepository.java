@@ -10,4 +10,5 @@ public interface FavoriteRepository extends JpaRepository<Favorite, UUID> {
     void deleteAllByUser(User user);
 
     Long countByRestaurantId(UUID uuid);
+    List<Favorite> findByRestaurantId(UUID uuid);
 }

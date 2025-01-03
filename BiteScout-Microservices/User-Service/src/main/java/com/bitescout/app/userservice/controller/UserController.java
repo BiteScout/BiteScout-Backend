@@ -121,5 +121,9 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/getUsersByFavRestaurant/{restaurantId}")
+    public ResponseEntity<List<UserDTO>> getUsersByFavoritedRestaurant(@PathVariable String restaurantId) {
+        return ResponseEntity.ok(userService.getUsersByFavoritedRestaurant(restaurantId));
+    }
 
 }

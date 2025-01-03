@@ -15,11 +15,11 @@ import java.util.UUID;
 )
 public interface UserClient {
 
-    @GetMapping("/get-users-by-favorited-restaurant/{restaurant-id}")
-    public List<UserResponse> getUsersByFavoritedRestaurant(@PathVariable("restaurant-id") String restaurantId);
+    @GetMapping("/getUsersByFavRestaurant/{restaurantId}")
+    public List<UserResponse> getUsersByFavoritedRestaurant(@PathVariable("restaurantId") String restaurantId);
 
-    @GetMapping("/{user-id}")
-    public Optional<UserResponse> getUser(@PathVariable("user-id") String userId);
+    @GetMapping("/{userId}")
+    public Optional<UserResponse> getUser(@PathVariable("userId") String userId);
 
     @GetMapping("/getUserByUsername/{username}")
     public Optional<UserAuthDTO> getUserByUsername(@PathVariable String username);

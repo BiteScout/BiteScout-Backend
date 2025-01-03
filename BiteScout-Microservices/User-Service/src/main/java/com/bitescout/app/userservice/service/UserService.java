@@ -255,4 +255,9 @@ public class UserService {
     }
 
 
+    public List<UserDTO> getUsersByFavoritedRestaurant(String restaurantId) {
+        List<Favorite> favorites = favoriteRepository.findByRestaurantId(UUID.fromString(restaurantId));
+        return favorites.stream().map(favorite -> modelMapper.map(favorite.getUser(), UserDTO.class)).collect(Collectors.toList());
+    }
+
 }

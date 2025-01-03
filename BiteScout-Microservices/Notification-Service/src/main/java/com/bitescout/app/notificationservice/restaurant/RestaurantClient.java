@@ -14,7 +14,7 @@ import java.util.List;
 public interface RestaurantClient {
 
     //get restaurant information from restaurant service (restaurant name needed)
-    @GetMapping("/{restaurant-id}")
-    Optional<RestaurantResponse> getRestaurant(@PathVariable("restaurant-id") String restaurantId);
+    @GetMapping("/{restaurantId}")
+    Optional<RestaurantResponse> getRestaurant(@PathVariable("restaurantId") String restaurantId);
 
 }
