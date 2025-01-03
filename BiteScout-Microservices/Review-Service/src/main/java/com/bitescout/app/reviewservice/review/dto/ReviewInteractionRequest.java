@@ -9,7 +9,7 @@ public record ReviewInteractionRequest(
         @NotBlank
         String reviewId,
 
-        @NotBlank
+        @NotNull
         InteractionType interactionType,
 
         @Size(min = 8, message = "Comment must be at least 8 characters long")
