@@ -3,11 +3,4 @@ spring:
     name: user-service # this name has to EXACTLY match the .yml file name in config service
   config:
       import: optional:configserver:http://localhost:8888
-  file:
-    storage:
-      service:
-        url: https://gcloud-storage-264767797819.us-central1.run.app/api/storage/user-picture/
-  email:
-    storage:
-      service:
-        url: https://gcloud-storage-service-264767797819.us-central1.run.app/api/storage/
+

@@ -112,6 +112,14 @@ public class RestaurantController {
         return ResponseEntity.ok(restaurantService.saveImage(restaurantId,image));
     }
 
+    @DeleteMapping("{restaurantId}/delete-picture")
+    @PreAuthorize("hasRole('ADMIN') or (@securityService.getRestaurantOwnerUsername(@securityService.getRestaurantOwnerId(#restaurantId)) == principal and hasRole('RESTAURANT_OWNER'))")
+    public ResponseEntity<String> deletePicture(@PathVariable String restaurantId) throws IOException {
+        restaurantService.deleteImage(restaurantId);
+        return ResponseEntity.noContent().build();
+
+    }
+
     // SPECIAL OFFER ENDPOINTS //
     @PostMapping("/{restaurantId}/offers")
     @PreAuthorize("hasRole('ADMIN') or (@securityService.getRestaurantOwnerUsername(@securityService.getRestaurantOwnerId(#restaurantId)) == principal and hasRole('RESTAURANT_OWNER') and @securityService.isEnabled(@securityService.getRestaurantOwnerId(#restaurantId)))")
