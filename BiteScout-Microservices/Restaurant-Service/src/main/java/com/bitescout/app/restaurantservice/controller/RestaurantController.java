@@ -2,6 +2,7 @@ package com.bitescout.app.restaurantservice.controller;
 
 import com.bitescout.app.restaurantservice.client.UserServiceClient;
 import com.bitescout.app.restaurantservice.dto.*;
+import com.bitescout.app.restaurantservice.entity.Images;
 import com.bitescout.app.restaurantservice.service.RestaurantService;
 import com.bitescout.app.restaurantservice.service.SecurityService;
 import com.bitescout.app.restaurantservice.service.SpecialOfferService;
@@ -118,6 +119,11 @@ public class RestaurantController {
         restaurantService.deleteImage(restaurantId);
         return ResponseEntity.noContent().build();
 
+    }
+
+    @GetMapping("images/{restaurantId}")
+    public ResponseEntity<List<String>> getRestaurantImages(@PathVariable String restaurantId) {
+        return ResponseEntity.ok(restaurantService.getImage(restaurantId));
     }
 
     // SPECIAL OFFER ENDPOINTS //

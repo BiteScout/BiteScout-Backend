@@ -5,6 +5,7 @@ import com.bitescout.app.restaurantservice.exc.ResourceNotFoundException;
 import com.bitescout.app.restaurantservice.repository.*;
 import com.bitescout.app.restaurantservice.entity.*;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -34,6 +35,7 @@ public class RestaurantService {
     @Value("${spring.file.storage.service.url}")
     private String fileStorageServiceUrl;
     private final RestaurantRepository restaurantRepository;
+    private final ImagesRepository imagesRepository;
     private final ModelMapper modelMapper;
     private final RestTemplate restTemplate;
 
@@ -57,6 +59,9 @@ public class RestaurantService {
             fileResource = new ByteArrayResource(image.getBytes()) {
                 @Override
                 public String getFilename() {
+                    if(image.getOriginalFilename() == null) {
+                        return UUID.randomUUID().toString();
+                    }
                     return image.getOriginalFilename();
                 }
             };
@@ -81,26 +86,53 @@ public class RestaurantService {
                 requestEntity,
                 String.class
         );
+
+        String imageUrl = response.getBody();
+
         Restaurant restaurant = restaurantRepository.findById(UUID.fromString(restaurantId))
                 .orElseThrow(() -> new ResourceNotFoundException("Restaurant not found"));
-        restaurant.addImageUrl(response.getBody());
+
+        if (restaurant.getImages() == null) {
+            restaurant.setImages(new ArrayList<>());
+        }
+
+
+        // Create a new Images entity
+        Images newImage = Images.builder()
+                .imageUrl(imageUrl)
+                .restaurant(restaurant)
+                .build();
+
+        // Save the new image entity
+        imagesRepository.save(newImage);
+
         return response.getBody();
     }
 
 
+    @Transactional
     public void deleteImage(String restaurantId) {
         // Send DELETE request to the worker service
         restTemplate.delete(fileStorageServiceUrl + restaurantId + "/delete");
         Restaurant restaurant = restaurantRepository.findById(UUID.fromString(restaurantId))
                 .orElseThrow(() -> new ResourceNotFoundException("Restaurant not found"));
-        restaurant.setImages(null);
+
+        imagesRepository.deleteAllByRestaurant(restaurant);
     }
 
     public List<String> getImage(String restaurantId) {
         Restaurant restaurant = restaurantRepository.findById(UUID.fromString(restaurantId))
                 .orElseThrow(() -> new ResourceNotFoundException("Restaurant not found"));
-        return restaurant.getImages();
+
+        List<Images> images = imagesRepository.findAllByRestaurant(restaurant);
+        List<String> imageUrls = new ArrayList<>();
+        for (Images image : images) {
+            imageUrls.add(image.getImageUrl());
+        }
+        return imageUrls;
     }
+
+
 
     public RestaurantResponseDTO getRestaurant(String restaurantId) {
         System.out.println("Fetching restaurant with ID: " + restaurantId);
