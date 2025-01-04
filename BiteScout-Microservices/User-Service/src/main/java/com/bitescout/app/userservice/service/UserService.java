@@ -150,6 +150,17 @@ public class UserService {
         return response.getBody();
     }
 
+    public void deleteUserPicture(String userId) {
+        // Retrieve the user by userId
+        User user = userRepository.findById(UUID.fromString(userId))
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        user.setProfilePicture(null);
+        userRepository.save(user);
+
+        restTemplate.delete(fileStorageServiceUrl + userId + "/delete");
+
+    }
+
 
     public UserDTO updateUser(UserUpdateRequestDTO request) {
         User user = userRepository.findById(UUID.fromString(request.getId()))

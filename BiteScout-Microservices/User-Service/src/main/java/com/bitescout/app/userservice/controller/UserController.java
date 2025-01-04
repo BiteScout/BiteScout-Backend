@@ -63,6 +63,12 @@ public class UserController {
         return ResponseEntity.ok(userService.updateUserPicture(userId, image));
     }
 
+    @DeleteMapping("/delete-picture/{userId}")
+    @PreAuthorize("hasRole('ADMIN') or @userService.getUser(#userId).username == principal")
+    public ResponseEntity<Void> deleteUserPicture(@PathVariable String userId) {
+        userService.deleteUserPicture(userId);
+        return ResponseEntity.ok().build();
+    }
 
 
     @DeleteMapping("/{userId}")
