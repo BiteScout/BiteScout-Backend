@@ -1,6 +1,11 @@
 server:
   port: 8060
 spring:
+  file:
+    storage:
+      service:
+        url: https://gcloud-storage-service-264767797819.us-central1.run.app/api/storage/restaurant-picture/
+
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5433/restaurants
@@ -37,5 +42,7 @@ spring:
 
 application:
   config:
+
+
 
 

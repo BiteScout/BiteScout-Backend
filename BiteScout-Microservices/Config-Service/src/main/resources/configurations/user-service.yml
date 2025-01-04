@@ -17,7 +17,11 @@ spring:
       max-file-size: 10MB
       max-request-size: 10MB
 
-file:
-  storage:
-    service:
-      url: https://gcloud-storage-264767797819.us-central1.run.app/api/storage
+  file:
+    storage:
+      service:
+        url: https://gcloud-storage-service-264767797819.us-central1.run.app/api/storage/user-picture/
+  email:
+    storage:
+      service:
+        url: https://gcloud-storage-service-264767797819.us-central1.run.app/api/storage/

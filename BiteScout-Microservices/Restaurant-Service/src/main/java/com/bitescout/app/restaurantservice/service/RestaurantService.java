@@ -87,6 +87,20 @@ public class RestaurantService {
         return response.getBody();
     }
 
+    public void deleteImage(String restaurantId) {
+        // Send DELETE request to the worker service
+        restTemplate.delete(fileStorageServiceUrl + restaurantId + "/delete");
+        Restaurant restaurant = restaurantRepository.findById(UUID.fromString(restaurantId))
+                .orElseThrow(() -> new ResourceNotFoundException("Restaurant not found"));
+        restaurant.setImages(null);
+    }
+
+    public List<String> getImage(String restaurantId) {
+        Restaurant restaurant = restaurantRepository.findById(UUID.fromString(restaurantId))
+                .orElseThrow(() -> new ResourceNotFoundException("Restaurant not found"));
+        return restaurant.getImages();
+    }
+
     public RestaurantResponseDTO getRestaurant(String restaurantId) {
         System.out.println("Fetching restaurant with ID: " + restaurantId);
         return restaurantRepository.findById(UUID.fromString(restaurantId))
