@@ -32,11 +32,6 @@ public class RestaurantController {
         return ResponseEntity.status(HttpStatus.CREATED).body(restaurantService.createRestaurant(restaurantRequest));
     }
 
-    @GetMapping("images/{restaurantId}")
-    public ResponseEntity<List<String>> getRestaurantImages(String restaurantId) {
-        return ResponseEntity.ok(restaurantService.getImage(restaurantId));
-    }
-
     @GetMapping
     public ResponseEntity<List<RestaurantResponseDTO>> getRestaurants() {
         return ResponseEntity.ok(restaurantService.getRestaurants());
