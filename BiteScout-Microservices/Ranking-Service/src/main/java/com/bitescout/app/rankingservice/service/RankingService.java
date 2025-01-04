@@ -34,8 +34,11 @@ public class RankingService {
     }
 
     public double calculateAverageRating(String restaurantId) {
-
-        return reviewClient.getReviewsByRestaurant(UUID.fromString(restaurantId)).getBody().stream()
+        List<ReviewDto> reviews = reviewClient.getReviewsByRestaurant(UUID.fromString(restaurantId)).getBody();
+        if (reviews == null || reviews.isEmpty()) {
+            return 0.0; // Return 0 if reviews are null or empty
+        }
+        return reviews.stream()
                 .mapToInt(ReviewDto::rating)
                 .average()
                 .orElse(0.0);
