@@ -9,7 +9,8 @@ public class RankingMapper {
     public RankingResponse toRankingResponse(Ranking ranking) {
         return new RankingResponse(
                 ranking.getAverageRating(),
-                ranking.getTierRanking()
+                ranking.getTierRanking(),
+                ranking.getPopularityScore()
         );
     }
 }
