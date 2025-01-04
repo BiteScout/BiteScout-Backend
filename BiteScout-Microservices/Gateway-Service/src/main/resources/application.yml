@@ -9,6 +9,7 @@ spring:
               - "http://localhost:8080"
               - "http://localhost:5174"
               - "http://localhost:8222"   # React app URL
+              - "https://bitescout.netlify.app"
             allowedMethods:
               - GET
               - POST
