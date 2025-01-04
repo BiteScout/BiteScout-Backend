@@ -45,6 +45,10 @@ public class Restaurant {
     @Column (nullable = false)
     private LocalDateTime updatedAt;
 
+    // One-to-Many relationship with SpecialOffer
+    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SpecialOffer> specialOffers = new ArrayList<>();
+
     @ElementCollection
     @CollectionTable(name = "restaurant_images", joinColumns = @JoinColumn(name = "restaurant_id"))
     @Column(name = "image_url")
