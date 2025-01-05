@@ -74,8 +74,20 @@ BiteScout aims to enhance the restaurant experience for both customers and resta
 This project is licensed under the **Apache License 2.0**. See the [LICENSE](LICENSE) file for details.
 
 ---
+## Running the Application**
 
-## Contributing
+1. **Clone the repository:**
+    ```bash
+    git clone [https://github.com/yourusername/ReactApp.git](https://github.com/BiteScout/BiteScout-Backend)
+    cd BiteScout-Backend
+    cd BiteScout-Microservices
+    ```
+
+2. **Start Script:**
+    ```bash
+    ./start-all.sh
+    ```
+    ## Contributing
 We welcome contributions to BiteScout! To contribute:
 1. 🪝 **Fork the repository.**
 2. 🌿 **Create a feature branch.**
