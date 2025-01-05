@@ -97,6 +97,12 @@ public class Restaurant {
 
     private String priceRange;
 
+    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SpecialOffer> specialOffers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Images> images;
+
     @Column (nullable = false)
     private LocalDateTime createdAt;
 
@@ -125,6 +131,23 @@ public class SpecialOffer {
 
     @Column(nullable = false) private LocalDateTime createdAt;
     @Column(nullable = false) private LocalDateTime updatedAt;
+}
+
+### Images
+Represents the `Images` entity stored in the `images` table.
+
+```java
+@Entity
+@Table(name = "images")
+public class Images{
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private UUID id;
+    private String imageUrl;
+
+    @ManyToOne
+    @JoinColumn(name = "restaurant_id", nullable = false)
+    private Restaurant restaurant;  // This links the image to a restaurant
 }
 ```
 
@@ -218,9 +241,11 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, UUID> {
             @Param("radius") double radiusInMeters
     );
     List<Restaurant> findByNameContainingIgnoreCase(String query);
+    Restaurant findByName(String name);
 
     List<Restaurant> findByCuisineTypeContainingIgnoreCase(String cuisineType);
-    List<Restaurant> findByPriceRangeContainingIgnoreCase(String priceRange);
+    List<Restaurant> findByPriceRangeIgnoreCase(String priceRange);
+}
 ```
 
 ### SpecialOfferRepository
@@ -230,5 +255,19 @@ Defines methods for accessing `SpecialOffer` entities.
 @Repository
 public interface SpecialOfferRepository extends JpaRepository<SpecialOffer, UUID> {
     List<SpecialOffer> findAllByRestaurantId(UUID restaurantId);
+
+    SpecialOffer findByRestaurant_NameAndTitle(String restaurantName, String title);
+}
+```
+
+### Images Repository
+Defines methods for accessing `Images` entities.
+
+```java
+@Repository
+public interface ImagesRepository extends JpaRepository<Images, UUID> {
+    List<Images> findAllByRestaurant(Restaurant restaurant);
+    void deleteAllByRestaurant(Restaurant restaurant);
+}
 }
 ```
