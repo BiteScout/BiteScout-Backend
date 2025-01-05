@@ -1,7 +1,6 @@
 package com.bitescout.app.reviewservice.user;
 
-import com.bitescout.app.reservationservice.user.UserAuthDTO;
-import com.bitescout.app.reservationservice.user.UserResponse;
+
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

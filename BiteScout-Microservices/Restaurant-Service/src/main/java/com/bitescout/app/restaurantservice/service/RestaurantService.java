@@ -109,6 +109,7 @@ public class RestaurantService {
         return response.getBody();
     }
 
+
     @Transactional
     public void deleteImage(String restaurantId) {
         // Send DELETE request to the worker service

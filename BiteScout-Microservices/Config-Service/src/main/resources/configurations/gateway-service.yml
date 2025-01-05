@@ -6,3 +6,24 @@ spring:
       discovery:
         locator:
           enabled: true
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins:
+              - "http://localhost:5173"
+              - "http://localhost:8080"
+              - "http://localhost:5174"
+              - "http://localhost:8222"   # React app URL
+              - "https://bitescout.netlify.app"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders:
+              - "Authorization"
+              - "Content-Type"
+              - "X-Requested-With"
+            allowCredentials: true
+            maxAge: 3600
