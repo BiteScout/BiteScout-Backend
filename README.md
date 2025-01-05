@@ -74,7 +74,7 @@ BiteScout aims to enhance the restaurant experience for both customers and resta
 This project is licensed under the **Apache License 2.0**. See the [LICENSE](LICENSE) file for details.
 
 ---
-## Running the Application**
+## Running the Application
 
 1. **Clone the repository:**
     ```bash
