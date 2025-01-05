@@ -2,9 +2,20 @@
 
 All the changes and updates documented in this file.
 
-## [0.9.4] 2025-01-03
+## [1.0.0] 2025-01-05 (RELEASE)
 ### Added
-- Review documentation
+- Added scripts for running the whole app
+- Added data.sql for initial restaurant and user data.
+- Scripts for running database and creating tables added.
+- Deployed the backend application
+- Picture uploading feature added and related endpoints updated.
+- Admin endpoints added.
+- Added Images entity to database for restaurant images.
+  
+### Fixed
+- CORS configuration fixed for https://bitescout.netlify.app
+- DDL Update changed to DDL Create
+- GetImages fixed for restaurant.
 
 ## [0.9.3] 2025-01-01
 
