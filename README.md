@@ -46,7 +46,7 @@ BiteScout aims to enhance the restaurant experience for both customers and resta
 ### **Frontend**
 - 🌐 HTML
 - 🎨 CSS
-- 💻 JavaScript
+- 💻 TypeScript
 - ⚛️ React
 
 ### **Backend**
