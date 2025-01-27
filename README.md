@@ -63,7 +63,6 @@ BiteScout aims to enhance the restaurant experience for both customers and resta
 
 ### **Authentication**
 - 🔑 JWT
-- 🔒 OAuth2
 
 ### **Messaging**
 - ✉️ Kafka for notifications
